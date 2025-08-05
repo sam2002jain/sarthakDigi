@@ -1,0 +1,177 @@
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function SignupScreen({ navigation }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  return (
+    <SafeAreaView>
+    <ScrollView>
+    <View style={styles.container}>
+      <Image
+        source={require('../assets/VTBG.png')}
+        style={styles.logo}
+      />
+      <Text style={styles.title}>Your Personal Consciousness Assistant</Text>
+
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity 
+          style={styles.toggleButton}
+          onPress={() => navigation.navigate('Auth')}
+        >
+          <Text style={styles.toggleText}>Sign In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.toggleButton, styles.activeToggle]}
+        >
+          <Text style={[styles.toggleText, styles.activeText]}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.row}>
+        <View style={[styles.inputContainer, { flex: 1, marginRight: 8 }]}>
+          <TextInput
+            style={styles.input}
+            placeholder="First name"
+            placeholderTextColor="#666"
+          />
+        </View>
+        <View style={[styles.inputContainer, { flex: 1 }]}>
+          <TextInput
+            style={styles.input}
+            placeholder="Last name"
+            placeholderTextColor="#666"
+          />
+        </View>
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="person-outline" size={24} color="#666" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Choose a username"
+          placeholderTextColor="#666"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="mail-outline" size={24} color="#666" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your email"
+          placeholderTextColor="#666"
+          keyboardType="email-address"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="lock-closed-outline" size={24} color="#666" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Create a password (min 8 characters)"
+          placeholderTextColor="#666"
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={24} color="#666" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="lock-closed-outline" size={24} color="#666" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm your password"
+          placeholderTextColor="#666"
+          secureTextEntry={!showConfirmPassword}
+        />
+        <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+          <Ionicons name={showConfirmPassword ? "eye-outline" : "eye-off-outline"} size={24} color="#666" />
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.signUpButton}>
+        <Text style={styles.signUpButtonText}>Sign Up</Text>
+      </TouchableOpacity>
+    </View>
+    </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#1A1625',
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    alignSelf: 'center',
+    marginTop: 50,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 24,
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    marginBottom: 30,
+  },
+  toggleButton: {
+    flex: 1,
+    padding: 15,
+    alignItems: 'center',
+  },
+  activeToggle: {
+    backgroundColor: '#9333EA',
+    borderRadius: 8,
+  },
+  toggleText: {
+    color: '#666',
+    fontSize: 16,
+  },
+  activeText: {
+    color: '#fff',
+  },
+  row: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2A2438',
+    borderRadius: 8,
+    marginBottom: 20,
+    paddingHorizontal: 15,
+  },
+  inputIcon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    color: '#fff',
+    padding: 15,
+    fontSize: 16,
+  },
+  signUpButton: {
+    backgroundColor: '#9333EA',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  signUpButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
