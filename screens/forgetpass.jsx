@@ -40,6 +40,9 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
 
+        <Text style={styles.title}>Reset Password</Text>
+        <Text style={styles.subtitle}>Enter your email and we'll send you a reset link</Text>
+
         <Text style={styles.label}>Email</Text>
         <View style={styles.inputContainer}>
           <Ionicons name="mail-outline" size={24} color="#bbb" style={styles.inputIcon} />
@@ -50,26 +53,13 @@ export default function LoginScreen() {
           />
         </View>
 
-        <Text style={styles.label}>Password</Text>
-        <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={24} color="#bbb" style={styles.inputIcon} />
-          <TextInput
-          style={styles.input}
-          placeholder="Enter your password"
-          placeholderTextColor="#bbb"
-          secureTextEntry={!showPassword}
-          />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={24} color="#bbb" />
-          </TouchableOpacity>
-        </View>
 
-        <TouchableOpacity style={styles.signInButton} onPress={()=> navigation.navigate('MainApp')}>
-          <Text style={styles.signInButtonText}>Sign In</Text>
+        <TouchableOpacity style={styles.signInButton}>
+          <Text style={styles.signInButtonText}>Send Reset Link</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={()=> navigation.navigate('ForgetPass')}>
-          <Text style={styles.forgotPassword}>Forgot your password?</Text>
+        <TouchableOpacity onPress={()=> navigation.navigate('Auth')}>
+          <Text style={styles.forgotPassword}>Back to SignIn</Text>
         </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -85,16 +75,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#1A1625',
   },
   logo: {
-    width: 150,
-    height: 150,
     alignSelf: 'center',
-    marginTop: 50,
+    marginTop: 30,
   },
   title: {
     color: '#fff',
     fontSize: 18,
     textAlign: 'center',
     marginVertical: 20,
+  },
+  subtitle: {
+    color: '#bbb',
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 20,
   },
   toggleContainer: {
     flexDirection: 'row',

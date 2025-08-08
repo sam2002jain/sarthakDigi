@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Logo from '../components/Logo';
+
+
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,13 +12,15 @@ export default function SignupScreen({ navigation }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#9381c6ff' }}>
     <ScrollView>
-    <View style={styles.container}>
-      <Image
-        source={require('../assets/VTBG.png')}
-        style={styles.logo}
-      />
+     <ImageBackground
+            source={require('../assets/bg.jpeg')}
+            style={styles.container}
+            resizeMode="cover"
+            imageStyle={{ opacity: 0.2 }}
+          >
+       <Logo style={styles.logo} />
       <Text style={styles.title}>Your Personal Consciousness Assistant</Text>
 
       <View style={styles.toggleContainer}>
@@ -37,67 +42,67 @@ export default function SignupScreen({ navigation }) {
           <TextInput
             style={styles.input}
             placeholder="First name"
-            placeholderTextColor="#666"
+            placeholderTextColor="#bbb"
           />
         </View>
         <View style={[styles.inputContainer, { flex: 1 }]}>
           <TextInput
             style={styles.input}
             placeholder="Last name"
-            placeholderTextColor="#666"
+            placeholderTextColor="#bbb"
           />
         </View>
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="person-outline" size={24} color="#666" style={styles.inputIcon} />
+        <Ionicons name="person-outline" size={24} color="#bbb" style={styles.inputIcon} />
         <TextInput
           style={styles.input}
           placeholder="Choose a username"
-          placeholderTextColor="#666"
+          placeholderTextColor="#bbb"
         />
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="mail-outline" size={24} color="#666" style={styles.inputIcon} />
+        <Ionicons name="mail-outline" size={24} color="#bbb" style={styles.inputIcon} />
         <TextInput
           style={styles.input}
           placeholder="Enter your email"
-          placeholderTextColor="#666"
+          placeholderTextColor="#bbb"
           keyboardType="email-address"
         />
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed-outline" size={24} color="#666" style={styles.inputIcon} />
+        <Ionicons name="lock-closed-outline" size={24} color="#bbb" style={styles.inputIcon} />
         <TextInput
           style={styles.input}
           placeholder="Create a password (min 8 characters)"
-          placeholderTextColor="#666"
+          placeholderTextColor="#bbb"
           secureTextEntry={!showPassword}
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={24} color="#666" />
+          <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={24} color="#bbb" />
         </TouchableOpacity>
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed-outline" size={24} color="#666" style={styles.inputIcon} />
+        <Ionicons name="lock-closed-outline" size={24} color="#bbb" style={styles.inputIcon} />
         <TextInput
           style={styles.input}
           placeholder="Confirm your password"
-          placeholderTextColor="#666"
+          placeholderTextColor="#bbb"
           secureTextEntry={!showConfirmPassword}
         />
         <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-          <Ionicons name={showConfirmPassword ? "eye-outline" : "eye-off-outline"} size={24} color="#666" />
+          <Ionicons name={showConfirmPassword ? "eye-outline" : "eye-off-outline"} size={24} color="#bbb" />
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.signUpButton}>
         <Text style={styles.signUpButtonText}>Sign Up</Text>
       </TouchableOpacity>
-    </View>
+    </ImageBackground>
     </ScrollView>
     </SafeAreaView>
   );
@@ -117,7 +122,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: 18,
     textAlign: 'center',
     marginVertical: 20,
   },
@@ -135,7 +140,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   toggleText: {
-    color: '#666',
+    color: '#fff',
     fontSize: 16,
   },
   activeText: {
