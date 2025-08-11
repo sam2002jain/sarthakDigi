@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Logo from '../components/Logo';
 
@@ -12,6 +12,7 @@ export default function SignupScreen({ navigation }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
+          <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <SafeAreaView style={{ flex: 1, backgroundColor: '#9381c6ff' }}>
     <ScrollView>
      <ImageBackground
@@ -105,6 +106,7 @@ export default function SignupScreen({ navigation }) {
     </ImageBackground>
     </ScrollView>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 

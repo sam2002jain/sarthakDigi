@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity,ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity,ImageBackground, KeyboardAvoidingView } from 'react-native';
 import Logo from '../components/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,6 +13,7 @@ export default function LoginScreen() {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
+      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <SafeAreaView style={{ flex: 1, backgroundColor: '#9381c6ff' }}>
       <ScrollView>
       <ImageBackground
@@ -75,6 +76,7 @@ export default function LoginScreen() {
       </ImageBackground>
       </ScrollView>
     </SafeAreaView>
+    </KeyboardAvoidingView>
     );
 }
 
