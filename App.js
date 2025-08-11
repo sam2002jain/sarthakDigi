@@ -9,30 +9,42 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginScreen from './screens/login';
 import SignupScreen from './screens/signup';
 import ForgetPassScreen from './screens/forgetpass';
-import HomeScreen from './screens/Homescreen'; 
+import CustomDrawer from './components/CustomDrawer';
+
+import Aichat from './screens/main/AichatScreen'; 
+import Communityhub from './screens/main/Communityhub';
+import ReflectionScreen from './screens/main/Reflectionjourney'; 
+import Practice from './screens/main/PracticeReminder'; 
+import Zoom from './screens/main/Zoomsession'; 
+import Profile from './screens/main/Profile'; 
+import Setting from './screens/main/Setting';
+
+
+
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 
 
-function ProfileScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>Profile Screen</Text>
-    </View>
-  );
-}
-
 function DrawerNavigation() {
   return (
     <Drawer.Navigator
+      drawerContent={props => <CustomDrawer {...props} />}
       screenOptions={{
         headerShown: false,
+        drawerStyle: {
+          backgroundColor: 'transparent',
+        },
       }}
     >
-      <Drawer.Screen name="Home" component={HomeScreen}/>
-      <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="AI Chat" component={Aichat} />
+      <Drawer.Screen name="Community" component={Communityhub} />
+      <Drawer.Screen name="Reflection" component={ReflectionScreen} />
+      <Drawer.Screen name="Practice" component={Practice} />
+      <Drawer.Screen name="Zoom" component={Zoom} />
+      <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen name="Setting" component={Setting} />
     </Drawer.Navigator>
   );
 }

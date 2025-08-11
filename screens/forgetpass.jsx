@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity,ImageBackground, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity,ImageBackground, KeyboardAvoidingView, ActivityIndicator, Alert } from 'react-native';
 import Logo from '../components/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -9,8 +9,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
-    const [isSignIn, setIsSignIn] = useState(true);
-    const [showPassword, setShowPassword] = useState(false);
+    const [sent, setSent] = useState(false);
+
+  
+    const emailsend = () => {
+
+        setSent(true);
+        // Simulate an API call
+        setTimeout(() => {
+            setSent(false);
+            Alert.alert("Success", "Password reset link sent!");
+            navigation.navigate('Auth');
+        }, 2000);
+    }
 
     return (
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -26,21 +37,6 @@ export default function LoginScreen() {
         <Logo style={styles.logo} />
         <Text style={styles.title}>Your Personal Consciousness Assistant</Text>
 
-        <View style={styles.toggleContainer}>
-          <TouchableOpacity 
-          style={[styles.toggleButton, isSignIn && styles.activeToggle]}
-          onPress={() => setIsSignIn(true)}
-          >
-          <Text style={[styles.toggleText, isSignIn && styles.activeText]}>Sign In</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-          style={[styles.toggleButton, !isSignIn && styles.activeToggle]}
-          onPress={() => navigation.navigate('Signup')}
-          >
-          <Text style={[styles.toggleText, !isSignIn && styles.activeText]}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-
         <Text style={styles.title}>Reset Password</Text>
         <Text style={styles.subtitle}>Enter your email and we'll send you a reset link</Text>
 
@@ -51,13 +47,16 @@ export default function LoginScreen() {
           style={styles.input}
           placeholder="Enter your email"
           placeholderTextColor="#bbb"
+          keyboardType="email-address"
           />
         </View>
 
 
-        <TouchableOpacity style={styles.signInButton}>
-          <Text style={styles.signInButtonText}>Send Reset Link</Text>
+        <TouchableOpacity style={styles.signInButton} onPress={emailsend}>
+          {sent && <ActivityIndicator />}
+          {!sent && <Text style={styles.signInButtonText}>Send Reset Link</Text>}
         </TouchableOpacity>
+
 
         <TouchableOpacity onPress={()=> navigation.navigate('Auth')}>
           <Text style={styles.forgotPassword}>Back to SignIn</Text>

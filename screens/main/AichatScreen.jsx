@@ -1,18 +1,23 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 
-function HomeScreen() {
-  const navigation = useNavigation();
+
+function HomeScreen(props) {
+  const { navigation } = props;
 
   return (
+    <SafeAreaView style={{ flex: 1}}>
     <View style={styles.container}>
       <TouchableOpacity style={styles.menuButton} onPress={() => navigation.openDrawer()}>
-        <Ionicons name="menu" size={24} color="black" />
+        <Ionicons name="menu" size={24} color="white" />
       </TouchableOpacity>
-      <Text>Home Screen</Text>
+
+
+
+      <Text style={styles.welcometext}>Hello Rama</Text>
     </View>
+    </SafeAreaView>
   );
 }
 
@@ -30,8 +35,14 @@ const styles = StyleSheet.create({
     top: 40,
     left: 20,
     padding: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#050000ff',
     borderRadius: 50,
     elevation: 5,
   },
+  welcometext:{
+    fontSize: 36,
+    color: '#dedb85ff',
+    fontWeight: 'bold',
+    fontFamily: 'Courier New',
+  }
 });
