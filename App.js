@@ -10,7 +10,7 @@ import LoginScreen from './screens/login';
 import SignupScreen from './screens/signup';
 import ForgetPassScreen from './screens/forgetpass';
 import CustomDrawer from './components/CustomDrawer';
-
+import Splash from './screens/SplashScreen';
 import Aichat from './screens/main/AichatScreen'; 
 import Communityhub from './screens/main/Communityhub';
 import ReflectionScreen from './screens/main/Reflectionjourney'; 
@@ -54,7 +54,8 @@ export default function App() {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='Splash'>
+            <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Auth" component={LoginScreen} />
             <Stack.Screen name="Signup" component={SignupScreen} />
             <Stack.Screen name="ForgetPass" component={ForgetPassScreen} />

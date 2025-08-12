@@ -65,7 +65,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.signInButton} onPress={()=> navigation.navigate('MainApp')}>
+        <TouchableOpacity style={styles.signInButton} onPress={()=> navigation.replace('MainApp')}>
           <Text style={styles.signInButtonText}>Sign In</Text>
         </TouchableOpacity>
 
