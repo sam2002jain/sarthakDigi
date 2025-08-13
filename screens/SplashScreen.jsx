@@ -15,7 +15,8 @@ const SplashScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ImageBackground style={styles.splashContainer} source={require('../assets/splashbg.png')}>
+      <ImageBackground style={styles.splashContainer}  resizeMode="cover"
+         source={require('../assets/splashbg.jpeg')}>
         <Animatable.View
           animation="fadeInUp"
           duration={1500}

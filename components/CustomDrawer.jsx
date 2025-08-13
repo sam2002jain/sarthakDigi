@@ -8,7 +8,7 @@ export default function CustomDrawer(props) {
   const { navigation } = props;
 
   const menuItems = [
-    { name: 'AI Chat', icon: 'chatbubble-outline', screen: 'AI Chat' },
+    { name: 'AI Chat', icon: 'chatbubble-outline', screen: 'AIChat' },
     { name: 'Practice Reminders', icon: 'notifications-outline', screen: 'Practice' },
     { name: 'Reflection Journal', icon: 'book-outline', screen: 'Reflection' },
     { name: 'Community Hub', icon: 'people-outline', screen: 'Community' },

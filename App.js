@@ -38,7 +38,7 @@ function DrawerNavigation() {
         },
       }}
     >
-      <Drawer.Screen name="AI Chat" component={Aichat} />
+      <Drawer.Screen name="AIChat" component={Aichat} />
       <Drawer.Screen name="Community" component={Communityhub} />
       <Drawer.Screen name="Reflection" component={ReflectionScreen} />
       <Drawer.Screen name="Practice" component={Practice} />
