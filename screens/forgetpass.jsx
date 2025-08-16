@@ -32,7 +32,7 @@ export default function LoginScreen() {
                     <ScrollView contentContainerStyle={styles.scrollContainer}>
                         <View style={styles.content}>
                             <Logo style={styles.logo} />
-                            <Text style={styles.title}>Your Personal Consciousness Assistant</Text>
+                            <Text style={styles.title}>We're here for you</Text>
                             <Text style={styles.title}>Reset Password</Text>
                             <Text style={styles.subtitle}>Enter your email and we'll send you a reset link</Text>
 

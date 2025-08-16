@@ -27,7 +27,7 @@ export default function CustomDrawer(props) {
       <DrawerContentScrollView {...props} contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
            <Logo width={30} height={25} />
-          <Text style={styles.brandText}>Solingnita™</Text>
+          <Text style={styles.brandText}>Sarthak Digital™</Text>
         </View>
 
         <View style={styles.menuContainer}>

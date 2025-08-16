@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity,Image, KeyboardAvoidingView, StatusBar } from 'react-native';
 import Logo from '../components/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -14,16 +14,11 @@ export default function LoginScreen() {
         <View style={{ flex: 1, backgroundColor: '#1A1625' }}>
             <StatusBar translucent backgroundColor="transparent" />
             <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-                <ImageBackground
-                    source={require('../assets/bg.jpeg')}
-                    style={styles.container}
-                    resizeMode="cover"
-                    imageStyle={{ opacity: 0.2 }}
-                >
+               <View style={styles.container}>
                     <ScrollView contentContainerStyle={styles.scrollContainer}>
                         <View style={styles.content}>
-                            <Logo style={styles.logo} />
-                            <Text style={styles.title}>Your Personal Consciousness Assistant</Text>
+                            <Image source={require('../assets/logo.png')} style={styles.logo} />
+                            <Text style={styles.title}>Welcome Back </Text>
 
                             <View style={styles.toggleContainer}>
                                 <TouchableOpacity
@@ -74,7 +69,7 @@ export default function LoginScreen() {
                             </TouchableOpacity>
                         </View>
                     </ScrollView>
-                </ImageBackground>
+                    </View>
             </KeyboardAvoidingView>
         </View>
     );

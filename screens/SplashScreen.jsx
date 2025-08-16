@@ -15,30 +15,29 @@ const SplashScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ImageBackground style={styles.splashContainer}  resizeMode="cover"
-         source={require('../assets/splashbg.jpeg')}>
+      <View style={styles.splashContainer}>
         <Animatable.View
           animation="fadeInUp"
           duration={1500}
           style={styles.logoContainer}
         >
-          <Ionicons name="sparkles" size={80} color="#d695eaff" />
+          <Ionicons name="sparkles" size={80} color="rgb(95, 47, 109)" />
           <Animatable.Text
             animation="fadeInLeft"
             delay={1500}
             style={styles.splashText}
           >
-            Rama's 360 OS™
+            Sarthak Digital™
           </Animatable.Text>
           <Animatable.Text
             animation="fadeInRight"
             delay={1500}
             style={styles.splashsubText}
           >
-            The Remembering Interface
+            Name of Perfection
           </Animatable.Text>
         </Animatable.View>
-      </ImageBackground>
+        </View>
     </SafeAreaView>
   );
 };
@@ -54,7 +53,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    opacity:1
+    opacity:0.7
   },
   logoContainer: {
     justifyContent: 'center',
@@ -63,14 +62,14 @@ const styles = StyleSheet.create({
   splashText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: 'black',
     marginTop: 10,
     fontFamily: 'Courier New',
   },
   splashsubText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: 'black',
     marginTop: 10,
     fontFamily: 'Courier New',
   },

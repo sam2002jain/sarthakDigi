@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "solignita",
-    "slug": "solignita",
+    "name": "sarthak",
+    "slug": "sarthak",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sam2002tani.solignita"
+      "bundleIdentifier": "com.sam2002tani.sarthak"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.sam2002tani.solignita"
+      "package": "com.sam2002tani.sarthak"
     },
     "web": {
       "favicon": "./assets/favicon.png"

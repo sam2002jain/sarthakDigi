@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, TextInput,Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Logo from '../components/Logo';
 
@@ -15,14 +15,9 @@ export default function SignupScreen({ navigation }) {
           <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <SafeAreaView style={{ flex: 1, backgroundColor: '#9381c6ff' }}>
     <ScrollView>
-     <ImageBackground
-            source={require('../assets/bg.jpeg')}
-            style={styles.container}
-            resizeMode="cover"
-            imageStyle={{ opacity: 0.2 }}
-          >
-       <Logo style={styles.logo} />
-      <Text style={styles.title}>Your Personal Consciousness Assistant</Text>
+    <View style={styles.container}>
+    <Image source={require('../assets/logo.png')} style={styles.logo} />
+      <Text style={styles.title}>Hey! Let's get started</Text>
 
       <View style={styles.toggleContainer}>
         <TouchableOpacity 
@@ -103,7 +98,7 @@ export default function SignupScreen({ navigation }) {
       <TouchableOpacity style={styles.signUpButton}>
         <Text style={styles.signUpButtonText}>Sign Up</Text>
       </TouchableOpacity>
-    </ImageBackground>
+    </View>
     </ScrollView>
     </SafeAreaView>
     </KeyboardAvoidingView>
