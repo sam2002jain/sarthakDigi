@@ -10,7 +10,7 @@ export default function CustomDrawer(props) {
   const menuItems = [
     { name: 'AI Chat', icon: 'chatbubble-outline', screen: 'AIChat' },
     { name: 'Practice Reminders', icon: 'notifications-outline', screen: 'Practice' },
-    { name: 'Reflection Journal', icon: 'book-outline', screen: 'Reflection' },
+    { name: 'Audio Journal', icon: 'book-outline', screen: 'Reflection' },
     { name: 'Community Hub', icon: 'people-outline', screen: 'Community' },
     { name: 'Zoom Sessions', icon: 'videocam-outline', screen: 'Zoom' },
   ];
