@@ -13,11 +13,9 @@ import CustomDrawer from './components/CustomDrawer';
 import Splash from './screens/SplashScreen';
 import Aichat from './screens/main/AichatScreen'; 
 import Communityhub from './screens/main/Communityhub';
-import ReflectionScreen from './screens/main/Reflectionjourney'; 
-import Practice from './screens/main/PracticeReminder'; 
 import Zoom from './screens/main/Zoomsession'; 
 import Profile from './screens/main/Profile'; 
-import Setting from './screens/main/Setting';
+import Otherlink from './screens/main/Otherlink';
 
 
 
@@ -40,11 +38,9 @@ function DrawerNavigation() {
     >
       <Drawer.Screen name="AIChat" component={Aichat} />
       <Drawer.Screen name="Community" component={Communityhub} />
-      <Drawer.Screen name="Reflection" component={ReflectionScreen} />
-      <Drawer.Screen name="Practice" component={Practice} />
       <Drawer.Screen name="Zoom" component={Zoom} />
       <Drawer.Screen name="Profile" component={Profile} />
-      <Drawer.Screen name="Setting" component={Setting} />
+      <Drawer.Screen name="Otherlink" component={Otherlink} />
     </Drawer.Navigator>
   );
 }
