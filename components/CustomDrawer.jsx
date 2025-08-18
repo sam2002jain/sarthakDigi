@@ -8,11 +8,10 @@ export default function CustomDrawer(props) {
   const { navigation } = props;
 
   const menuItems = [
-    { name: 'AI Chat', icon: 'chatbubble-outline', screen: 'AIChat' },
-    { name: 'Practice Reminders', icon: 'notifications-outline', screen: 'Practice' },
-    { name: 'Audio Journal', icon: 'book-outline', screen: 'Reflection' },
-    { name: 'Community Hub', icon: 'people-outline', screen: 'Community' },
-    { name: 'Zoom Sessions', icon: 'videocam-outline', screen: 'Zoom' },
+    { name: 'Prabhavna Manch', icon: 'chatbubble-outline', screen: 'Prabhavna' },
+    { name: 'Swadhyay Manch', icon: 'people-outline', screen: 'Swadhyay' },
+    { name: 'Bhajan Writing', icon: 'pencil-outline', screen: 'Bhajan' },
+    { name: 'Quiz', icon: 'hourglass-outline', screen: 'Quiz' },
   ];
 
   const bottomMenuItems = [
