@@ -10,7 +10,6 @@ const firebaseConfig = {
   appId: "1:512104532100:web:dae28f1c70ea48c8f75ad1"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 // Initialize Auth with a safe fallback for React Native
