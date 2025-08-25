@@ -11,13 +11,12 @@ import SignupScreen from './screens/signup';
 import ForgetPassScreen from './screens/forgetpass';
 import CustomDrawer from './components/CustomDrawer';
 import Splash from './screens/SplashScreen';
-import Aichat from './screens/main/AichatScreen'; 
-import Communityhub from './screens/main/Communityhub';
-import ReflectionScreen from './screens/main/Reflectionjourney'; 
-import Practice from './screens/main/PracticeReminder'; 
-import Zoom from './screens/main/Zoomsession'; 
+import Prabhavna from './screens/main/PrabhavnaScreen'; 
+import Swadhyay from './screens/main/SwadhyayScreen';
+import Quiz from './screens/main/QuizScreen'; 
 import Profile from './screens/main/Profile'; 
-import Setting from './screens/main/Setting';
+import Otherlink from './screens/main/Otherlink';
+import BhajanScreen from './screens/main/BhajanScreen';
 
 
 
@@ -38,13 +37,13 @@ function DrawerNavigation() {
         },
       }}
     >
-      <Drawer.Screen name="AIChat" component={Aichat} />
-      <Drawer.Screen name="Community" component={Communityhub} />
-      <Drawer.Screen name="Reflection" component={ReflectionScreen} />
-      <Drawer.Screen name="Practice" component={Practice} />
-      <Drawer.Screen name="Zoom" component={Zoom} />
+      <Drawer.Screen name="Prabhavna" component={Prabhavna} />
+      <Drawer.Screen name="Swadhyay" component={Swadhyay} />
+      <Drawer.Screen name="Bhajan" component={BhajanScreen} />
+
+      <Drawer.Screen name="Quiz" component={Quiz} />
       <Drawer.Screen name="Profile" component={Profile} />
-      <Drawer.Screen name="Setting" component={Setting} />
+      <Drawer.Screen name="Otherlink" component={Otherlink} />
     </Drawer.Navigator>
   );
 }

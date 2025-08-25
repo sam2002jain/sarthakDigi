@@ -1,29 +1,43 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity,Image, KeyboardAvoidingView, StatusBar } from 'react-native';
 import Logo from '../components/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
     const [isSignIn, setIsSignIn] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSignIn = async () => {
+        if (!email || !password) {
+            Alert.alert('Missing info', 'Please enter email and password.');
+            return;
+        }
+        
+        try {
+            await signInWithEmailAndPassword(auth, email.trim(), password);
+            navigation.replace('MainApp');
+        } catch (err) {
+            Alert.alert('Sign in failed', err.message);
+        } 
+    };
+
 
     return (
         <View style={{ flex: 1, backgroundColor: '#1A1625' }}>
             <StatusBar translucent backgroundColor="transparent" />
             <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-                <ImageBackground
-                    source={require('../assets/bg.jpeg')}
-                    style={styles.container}
-                    resizeMode="cover"
-                    imageStyle={{ opacity: 0.2 }}
-                >
+               <View style={styles.container}>
                     <ScrollView contentContainerStyle={styles.scrollContainer}>
                         <View style={styles.content}>
-                            <Logo style={styles.logo} />
-                            <Text style={styles.title}>Your Personal Consciousness Assistant</Text>
+                            <Image source={require('../assets/logo.png')} style={styles.logo} />
+                            <Text style={styles.title}>Welcome Back </Text>
 
                             <View style={styles.toggleContainer}>
                                 <TouchableOpacity
@@ -48,6 +62,8 @@ export default function LoginScreen() {
                                     placeholder="Enter your email"
                                     placeholderTextColor="#bbb"
                                     keyboardType="email-address"
+                                    value={email}
+                                    onChangeText={setEmail}
                                 />
                             </View>
 
@@ -59,13 +75,15 @@ export default function LoginScreen() {
                                     placeholder="Enter your password"
                                     placeholderTextColor="#bbb"
                                     secureTextEntry={!showPassword}
+                                    value={password}
+                                    onChangeText={setPassword}
                                 />
                                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                     <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={24} color="#bbb" />
                                 </TouchableOpacity>
                             </View>
 
-                            <TouchableOpacity style={styles.signInButton} onPress={() => navigation.replace('MainApp')}>
+                            <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
                                 <Text style={styles.signInButtonText}>Sign In</Text>
                             </TouchableOpacity>
 
@@ -74,7 +92,7 @@ export default function LoginScreen() {
                             </TouchableOpacity>
                         </View>
                     </ScrollView>
-                </ImageBackground>
+                    </View>
             </KeyboardAvoidingView>
         </View>
     );
@@ -82,7 +100,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, // Make the background fill the available space
+        flex: 1,
         backgroundColor: '#1A1625',
     },
     // New style for the ScrollView's content

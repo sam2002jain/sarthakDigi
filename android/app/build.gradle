@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.sam2002tani.solignita"
+    namespace "com.sam2002tani.sarthak"
     defaultConfig {
-        applicationId 'com.sam2002tani.solignita'
+        applicationId 'com.sam2002tani.sarthak'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

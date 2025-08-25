@@ -1,4 +1,4 @@
-package com.sam2002tani.solignita
+package com.sam2002tani.sarthak
 
 import android.app.Application
 import android.content.res.Configuration

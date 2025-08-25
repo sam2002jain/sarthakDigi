@@ -4,20 +4,33 @@ import Logo from '../components/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
     const [sent, setSent] = useState(false);
+    const [email, setEmail] = useState('');
 
-    const emailsend = () => {
-        setSent(true);
-        // Simulate an API call
-        setTimeout(() => {
-            setSent(false);
-            Alert.alert("Success", "Password reset link sent!");
+    const emailsend = async () => {
+        if (!email) {
+            Alert.alert('Missing email', 'Please enter your email address.');
+            return;
+        }
+        try {
+            setSent(true);
+            await sendPasswordResetEmail(auth, email.trim());
+            Alert.alert('Link sent', 'Please check your junk or spam in your email.');
+            
             navigation.navigate('Auth');
-        }, 2000);
-    }
+        } catch (err) {
+            Alert.alert('Reset failed', err.message);
+        } finally {
+            setSent(false);
+        }
+    };
+
+
 
     return (
         <View style={{ flex: 1, backgroundColor: '#9381c6ff' }}>
@@ -32,7 +45,7 @@ export default function LoginScreen() {
                     <ScrollView contentContainerStyle={styles.scrollContainer}>
                         <View style={styles.content}>
                             <Logo style={styles.logo} />
-                            <Text style={styles.title}>Your Personal Consciousness Assistant</Text>
+                            <Text style={styles.title}>We're here for you</Text>
                             <Text style={styles.title}>Reset Password</Text>
                             <Text style={styles.subtitle}>Enter your email and we'll send you a reset link</Text>
 
@@ -44,6 +57,8 @@ export default function LoginScreen() {
                                     placeholder="Enter your email"
                                     placeholderTextColor="#bbb"
                                     keyboardType="email-address"
+                                    value={email}
+                                    onChangeText={setEmail}
                                 />
                             </View>
 

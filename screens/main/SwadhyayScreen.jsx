@@ -2,14 +2,11 @@ import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, Ima
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
-// Placeholder for a background image. You should replace this with a local asset.
-// For now, it's a static image from an online source to match the visual.
-const backgroundImage = { uri: 'https://i.imgur.com/Q6k0q3y.jpg' };
+
 
 const PostCard = ({ author, time, content, tags, appreciations, comments }) => (
   <View style={postStyles.postCard}>
     <View style={postStyles.postHeader}>
-      {/* Placeholder for user avatar. Use an Image component if you have user avatars. */}
       <Ionicons name="person-circle-outline" size={40} color="#333" style={postStyles.avatar} />
       <View>
         <Text style={postStyles.authorName}>{author}</Text>
@@ -52,7 +49,7 @@ const CommunityHub = (props) => {
       </View>
       
       {/* Background and Scrollable Content */}
-      <ImageBackground source={backgroundImage} style={styles.background}>
+      <ImageBackground source={require('../../assets/bg.jpeg')} style={styles.background}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {/* Main Community Header */}
           <View style={styles.communityHeader}>
