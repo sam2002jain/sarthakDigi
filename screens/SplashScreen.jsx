@@ -27,7 +27,7 @@ const SplashScreen = () => {
             delay={1500}
             style={styles.splashText}
           >
-            Sarthak Digital™
+            Sarthak Digital
           </Animatable.Text>
           <Animatable.Text
             animation="fadeInRight"
