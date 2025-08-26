@@ -15,6 +15,7 @@ export default function CustomDrawer(props) {
   ];
 
   const bottomMenuItems = [
+     { name: 'MainMenu', icon: 'menu-outline', screen: 'Selection' },
     { name: 'My Profile', icon: 'person-outline', screen: 'Profile' },
     { name: 'Other Links', icon: 'link-outline', screen: 'Otherlink' },
     { name: 'Logout', icon: 'log-out-outline', screen: 'Auth' },

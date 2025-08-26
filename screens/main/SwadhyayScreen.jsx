@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, ImageBackground } from 'react-native';
-import React from 'react';
+import { StyleSheet, TextInput, Text, View, SafeAreaView, TouchableOpacity, ScrollView, ImageBackground, Modal } from 'react-native';
+import React,{useState} from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 
@@ -36,6 +36,38 @@ const PostCard = ({ author, time, content, tags, appreciations, comments }) => (
 
 const CommunityHub = (props) => {
   const { navigation } = props;
+    const [modalVisible, setModalVisible] = useState(false);
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("23/08/2025");
+  const [journalContent, setJournalContent] = useState("");
+  const [tags, setTags] = useState("");
+
+  const handlePlayPause = (index) => {
+    if (playingIndex === index) {
+      setPlayingIndex(null);
+    } else {
+      setPlayingIndex(index);
+    }
+  };
+
+  const handleSaveExperience = () => {
+    // Logic to save the recorded experience to a journal
+    console.log("Recorded experience:", recordedExperience);
+    setRecordedExperience(""); // Clear the text input
+    setRecord(false); // Close the modal
+  };
+
+  const handleSave = () => {
+    // Logic to save the journal entry
+    setModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    // Logic to cancel and close the modal
+    setModalVisible(false);
+  };
+
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Main Header */}
@@ -50,17 +82,18 @@ const CommunityHub = (props) => {
       
       {/* Background and Scrollable Content */}
       <ImageBackground source={require('../../assets/bg.jpeg')} style={styles.background}>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+       
           {/* Main Community Header */}
           <View style={styles.communityHeader}>
             <Text style={styles.communityTitle}>Indra's Luminous Web</Text>
             
-            <TouchableOpacity style={styles.createPostButton}>
+            <TouchableOpacity style={styles.createPostButton} onPress={() => setModalVisible(true)}>
               <Ionicons name="add-circle-outline" size={20} color="#fff" />
               <Text style={styles.createPostText}>Create Post</Text>
             </TouchableOpacity>
           </View>
-          
+
+           <ScrollView contentContainerStyle={styles.scrollContainer}>
           {/* Feed of Community Posts */}
           <View style={styles.postFeed}>
             <PostCard
@@ -91,6 +124,83 @@ const CommunityHub = (props) => {
           </View>
         </ScrollView>
       </ImageBackground>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <ScrollView contentContainerStyle={styles.centeredView}>
+          <View style={styles.modalView}>
+            {/* Title Input Field */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Title</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Give your entry a title"
+                value={title}
+                onChangeText={setTitle}
+              />
+            </View>
+
+            {/* Date Input Field */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Date</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="DD/MM/YYYY"
+                value={date}
+                onChangeText={setDate}
+              />
+            </View>
+
+            {/* Journal Entry Text Area */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Post Entry</Text>
+              <TextInput
+                style={[styles.modalInput, styles.journalInput]}
+                placeholder="What insights or experiences would you like to document?"
+                multiline
+                value={journalContent}
+                onChangeText={setJournalContent}
+              />
+            </View>
+
+            {/* Tags Input Field */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Tags</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Add tags.."
+                value={tags}
+                onChangeText={setTags}
+              />
+            </View>
+
+           
+            
+
+            {/* Action Buttons */}
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity
+                style={styles.modalCancelBtn}
+                onPress={handleCancel}
+              >
+                <Text style={styles.modalBtnText2}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalSaveBtn}
+                onPress={handleSave}
+              >
+                <Text style={styles.modalBtnText1}>Save Entry</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -139,6 +249,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 15,
+    width:'90%',
+    alignSelf:'center',
+    marginTop:5,
   },
   communityTitle: {
     fontSize: 16,
@@ -161,6 +274,103 @@ const styles = StyleSheet.create({
   },
   postFeed: {
     // This view simply holds all the PostCards
+  },
+    centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: "90%",
+  },
+  label: {
+    alignSelf: "flex-start",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 5,
+    color: "#000",
+  },
+  inputContainer: {
+    width: "100%",
+    marginBottom: 15,
+  },
+  modalInput: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#bbb",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 14,
+  },
+  journalInput: {
+    height: 150,
+    textAlignVertical: "top",
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 20,
+    alignSelf: "flex-start",
+  },
+  checkbox: {
+    marginRight: 8,
+  },
+  checkboxLabel: {
+    fontSize: 14,
+    color: "#000",
+  },
+  modalButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  modalCancelBtn: {
+    backgroundColor: "#fff",
+    borderColor: "#dbd8d8ff",
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    flex: 1,
+    marginRight: 10,
+    justifyContent: "center",
+  },
+  modalSaveBtn: {
+    backgroundColor: "#5D3FD3",
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    flex: 1,
+    marginLeft: 10,
+    justifyContent: "center",
+  },
+  modalBtnText1: {
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: "bold",
+  },
+  modalBtnText2: {
+    color: "#090909ff",
+    fontSize: 11,
+    fontWeight: "bold",
   },
 });
 
@@ -232,4 +442,5 @@ const postStyles = StyleSheet.create({
     fontSize: 13,
     color: '#555',
   },
+
 });

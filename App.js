@@ -17,6 +17,7 @@ import Quiz from './screens/main/QuizScreen';
 import Profile from './screens/main/Profile'; 
 import Otherlink from './screens/main/Otherlink';
 import BhajanScreen from './screens/main/BhajanScreen';
+import Selection from './screens/main/SelectionScreen';
 
 
 
@@ -37,13 +38,15 @@ function DrawerNavigation() {
         },
       }}
     >
+      
       <Drawer.Screen name="Prabhavna" component={Prabhavna} />
       <Drawer.Screen name="Swadhyay" component={Swadhyay} />
       <Drawer.Screen name="Bhajan" component={BhajanScreen} />
-
+      <Drawer.Screen name="Selection" component={Selection} />
       <Drawer.Screen name="Quiz" component={Quiz} />
       <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="Otherlink" component={Otherlink} />
+      
     </Drawer.Navigator>
   );
 }
@@ -53,12 +56,31 @@ export default function App() {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='Splash'>
+          <Stack.Navigator 
+            screenOptions={{ 
+              headerShown: false,
+              animation: 'slide_from_right'  // Add animation
+            }} 
+            initialRouteName='Splash'
+          >
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Auth" component={LoginScreen} />
             <Stack.Screen name="Signup" component={SignupScreen} />
             <Stack.Screen name="ForgetPass" component={ForgetPassScreen} />
+            <Stack.Screen 
+              name="Selection" 
+              component={Selection}
+              options={{
+                headerShown: false,
+                animation: 'slide_from_right',
+                gestureEnabled: false,
+                headerLeft: () => null,
+                headerBackVisible: false
+              }}
+            />
             <Stack.Screen name="MainApp" component={DrawerNavigation} />
+            
+            
           </Stack.Navigator>
         </NavigationContainer>
       </GestureHandlerRootView>

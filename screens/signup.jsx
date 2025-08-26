@@ -42,8 +42,8 @@ export default function SignupScreen({ navigation }) {
         displayName: username,
       });
 
-      // Navigate to the main app screen
-      navigation.navigate("MainApp");
+      // Navigate to the Selection screen instead of MainApp
+      navigation.navigate("Selection");
     } catch (error) {
       alert(error.message);
     }

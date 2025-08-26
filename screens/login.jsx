@@ -22,7 +22,7 @@ export default function LoginScreen() {
         
         try {
             await signInWithEmailAndPassword(auth, email.trim(), password);
-            navigation.replace('MainApp');
+            navigation.replace('Selection');
         } catch (err) {
             Alert.alert('Sign in failed', err.message);
         } 
