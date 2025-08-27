@@ -18,6 +18,7 @@ import Profile from './screens/main/Profile';
 import Otherlink from './screens/main/Otherlink';
 import BhajanScreen from './screens/main/BhajanScreen';
 import Selection from './screens/main/SelectionScreen';
+import InsuranceScreen from './screens/main/InsuranceScreen';
 
 
 
@@ -70,6 +71,17 @@ export default function App() {
             <Stack.Screen 
               name="Selection" 
               component={Selection}
+              options={{
+                headerShown: false,
+                animation: 'slide_from_right',
+                gestureEnabled: false,
+                headerLeft: () => null,
+                headerBackVisible: false
+              }}
+            />
+            <Stack.Screen 
+              name="Insurance" 
+              component={InsuranceScreen}
               options={{
                 headerShown: false,
                 animation: 'slide_from_right',

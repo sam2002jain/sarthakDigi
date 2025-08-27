@@ -1,75 +1,79 @@
-import { StyleSheet, Text, View, TouchableOpacity, BackHandler } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import React from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
 
-const Selection = () => {
-  const [selectedOption, setSelectedOption] = useState(null);
+const InsuranceScreen = () => {
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      return true;
-    });
-    return () => backHandler.remove();
-  }, []);
-
-  const serviceOptions = [
+  const insuranceOptions = [
     {
       id: 1,
-      title: "Online Jain Manch",
-      icon: "people-outline",
-      description: "Connect with the Jain community online",
+      title: "Vehicle Insurance",
+      icon: "car-outline",
+      description: "Protect your vehicle with comprehensive coverage",
       color: "#FF6B6B",
-      route: "MainApp"
     },
     {
       id: 2,
-      title: "Insurance Services",
-      icon: "shield-checkmark-outline",
-      description: "Explore our insurance solutions",
+      title: "Health Insurance",
+      icon: "medical-outline",
+      description: "Secure your health with the best coverage",
       color: "#4ECDC4",
-      route: "Insurance"
     },
     {
       id: 3,
-      title: "Jainam Print",
-      icon: "print-outline",
-      description: "Professional printing services",
+      title: "Life Insurance",
+      icon: "shield-checkmark-outline",
+      description: "Ensure your familys future security",
       color: "#45B7D1",
-      route: null
-    }
+    },
+    {
+      id: 4,
+      title: "Visit Website",
+      icon: "globe-outline",
+      description: "Explore more insurance options online",
+      color: "#96CEB4",
+    },
   ];
 
-  const handlePress = (option) => {
-    setSelectedOption(option.title);
-    if (option.route) {
-      navigation.navigate(option.route);
-    } else {
-      alert('This feature will be available soon!');
-    }
+  const handleCardPress = (title) => {
+    // Handle navigation or actions for each card
+    alert(`${title} selected! This feature will be implemented soon.`);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Welcome to Jainam</Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Insurance Services</Text>
       </View>
 
-      <View style={styles.content}>
-        <Text style={styles.subtitle}>Choose Your Service</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text style={styles.subtitle}>Choose Your Insurance Plan</Text>
 
         <Animatable.View
           animation="fadeInUp"
           duration={1500}
           style={styles.cardsContainer}
         >
-          {serviceOptions.map((option) => (
+          {insuranceOptions.map((option) => (
             <TouchableOpacity
               key={option.id}
               style={[styles.card, { backgroundColor: option.color }]}
-              onPress={() => handlePress(option)}
+              onPress={() => handleCardPress(option.title)}
             >
               <View style={styles.cardIcon}>
                 <Ionicons name={option.icon} size={32} color="#fff" />
@@ -82,12 +86,12 @@ const Selection = () => {
             </TouchableOpacity>
           ))}
         </Animatable.View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
 
-export default Selection;
+export default InsuranceScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -95,35 +99,41 @@ const styles = StyleSheet.create({
     backgroundColor: "#1A1625",
   },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 20,
     paddingTop: 60,
     backgroundColor: "#2A2438",
-    alignItems: 'center'
+  },
+  backButton: {
+    padding: 8,
   },
   headerTitle: {
     color: "#fff",
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "bold",
+    marginLeft: 15,
   },
-  content: {
-    flex: 1,
+  scrollContent: {
     padding: 20,
   },
   subtitle: {
     color: "#fff",
-    fontSize: 20,
-    marginBottom: 30,
+    fontSize: 18,
+    marginBottom: 20,
     textAlign: "center",
   },
   cardsContainer: {
-    flexDirection: "column",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   card: {
-    width: "100%",
+    width: "48%",
     padding: 20,
     borderRadius: 15,
-    marginBottom: 20,
-    minHeight: 140,
+    marginBottom: 15,
+    minHeight: 180,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -138,13 +148,13 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     color: "#fff",
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8,
   },
   cardDescription: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 12,
     opacity: 0.9,
     marginBottom: 15,
   },
@@ -152,5 +162,5 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 15,
     right: 15,
-  }
+  },
 });
