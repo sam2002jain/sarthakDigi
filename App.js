@@ -19,6 +19,8 @@ import Otherlink from './screens/main/Otherlink';
 import BhajanScreen from './screens/main/BhajanScreen';
 import Selection from './screens/main/SelectionScreen';
 import InsuranceScreen from './screens/main/InsuranceScreen';
+import { AuthProvider } from './components/context/AuthContext';
+
 
 
 
@@ -54,6 +56,7 @@ function DrawerNavigation() {
 
 export default function App() {
   return (
+    <AuthProvider>
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
@@ -97,6 +100,7 @@ export default function App() {
         </NavigationContainer>
       </GestureHandlerRootView>
     </SafeAreaProvider>
+    </AuthProvider>
   );
 }
 

@@ -7,13 +7,15 @@ import {
   Image,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Logo from "../components/Logo";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from '../components/context/AuthContext';
+
 
 export default function SignupScreen({ navigation }) {
   const [firstname, setFirstname] = useState("");
@@ -22,30 +24,36 @@ export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {signUp} = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
   const handleSignUp = async () => {
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
+    if (!email || !password) {
+      Alert.alert('Missing info', 'Please enter email and password.');
       return;
     }
-
+    if (password !== confirmPassword) {
+      Alert.alert('Password mismatch', 'Passwords do not match.');
+      return;
+    }
+    setIsSubmitting(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Update the user's profile
-      await updateProfile(user, {
-        displayName: username,
-      });
-
-      // Navigate to the Selection screen instead of MainApp
-      navigation.navigate("Selection");
-    } catch (error) {
-      alert(error.message);
+      const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
+      if (firstname || lastname || username) {
+        await updateProfile(cred.user, {
+          displayName: username || `${firstname} ${lastname}`.trim(),
+        });
+        await signUp({ firstname, lastname, username, email: email.trim() });
+      }
+      Alert.alert('Success', 'Account created. You are now signed in.');
+      navigation.replace('Selection');
+    } catch (err) {
+      Alert.alert('Sign up failed', err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -179,9 +187,9 @@ export default function SignupScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.signUpButton} onPress = {handleSignUp}>
-              <Text style={styles.signUpButtonText}>Sign Up</Text>
-            </TouchableOpacity>
+            <TouchableOpacity style={styles.signUpButton} disabled={isSubmitting} onPress={handleSignUp}>
+        <Text style={styles.signUpButtonText}>{isSubmitting ? 'Creating...' : 'Sign Up'}</Text>
+      </TouchableOpacity>
           </View>
         </ScrollView>
       </SafeAreaView>

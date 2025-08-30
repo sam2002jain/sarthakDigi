@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, BackHandler } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, BackHandler, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
@@ -44,8 +44,9 @@ const Selection = () => {
 
   const handlePress = (option) => {
     setSelectedOption(option.title);
+    console.log(option.route);
     if (option.route) {
-      navigation.navigate(option.route);
+      navigation.replace(option.route);
     } else {
       alert('This feature will be available soon!');
     }
@@ -59,7 +60,7 @@ const Selection = () => {
 
       <View style={styles.content}>
         <Text style={styles.subtitle}>Choose Your Service</Text>
-
+        <ScrollView>
         <Animatable.View
           animation="fadeInUp"
           duration={1500}
@@ -82,6 +83,7 @@ const Selection = () => {
             </TouchableOpacity>
           ))}
         </Animatable.View>
+        </ScrollView>
       </View>
     </View>
   );
