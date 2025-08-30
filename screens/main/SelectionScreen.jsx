@@ -45,8 +45,10 @@ const Selection = () => {
   const handlePress = (option) => {
     setSelectedOption(option.title);
     console.log(option.route);
-    if (option.route) {
-      navigation.replace(option.route);
+    if (option.id=='1') {
+      navigation.replace('MainApp');
+    } else if (option.route) {
+      navigation.navigate(option.route);
     } else {
       alert('This feature will be available soon!');
     }

@@ -4,14 +4,19 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  TextInput,
+  TouchableWithoutFeedback,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
 
 const InsuranceScreen = () => {
   const navigation = useNavigation();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedInsuranceType, setSelectedInsuranceType] = useState("");
 
   const insuranceOptions = [
     {
@@ -45,8 +50,114 @@ const InsuranceScreen = () => {
   ];
 
   const handleCardPress = (title) => {
-    // Handle navigation or actions for each card
-    alert(`${title} selected! This feature will be implemented soon.`);
+    if (title === "Visit Website") {
+      alert("Opening website...");
+      return;
+    }
+    setSelectedInsuranceType(title);
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleSubmit = () => {
+    // Here you would handle the form submission based on selectedInsuranceType
+    alert(`Inquiry for ${selectedInsuranceType} submitted!`);
+    closeModal();
+  };
+
+  const renderFormFields = () => {
+    // These are common fields for all forms
+    const commonFields = (
+      <>
+        <Text style={styles.formLabel}>Full Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your full name"
+          placeholderTextColor="#aaa"
+        />
+        <Text style={styles.formLabel}>Phone Number</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your phone number"
+          placeholderTextColor="#aaa"
+          keyboardType="phone-pad"
+        />
+        <Text style={styles.formLabel}>Email Address</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your email address"
+          placeholderTextColor="#aaa"
+          keyboardType="email-address"
+        />
+      </>
+    );
+
+    // Conditional rendering for specific fields
+    switch (selectedInsuranceType) {
+      case "Vehicle Insurance":
+        return (
+          <>
+            {commonFields}
+            <Text style={styles.formLabel}>Vehicle Number</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your vehicle number"
+              placeholderTextColor="#aaa"
+            />
+            <Text style={styles.formLabel}>RC Number</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your RC number"
+              placeholderTextColor="#aaa"
+            />
+          </>
+        );
+      case "Health Insurance":
+        return (
+          <>
+            {commonFields}
+            <Text style={styles.formLabel}>Age</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Your age"
+              placeholderTextColor="#aaa"
+              keyboardType="number-pad"
+            />
+            <Text style={styles.formLabel}>Number of Family Members</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Number of members to be covered"
+              placeholderTextColor="#aaa"
+              keyboardType="number-pad"
+            />
+          </>
+        );
+      case "Life Insurance":
+        return (
+          <>
+            {commonFields}
+            <Text style={styles.formLabel}>Age</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Your age"
+              placeholderTextColor="#aaa"
+              keyboardType="number-pad"
+            />
+            <Text style={styles.formLabel}>Desired Coverage Amount</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g., $100,000"
+              placeholderTextColor="#aaa"
+              keyboardType="numeric"
+            />
+          </>
+        );
+      default:
+        return commonFields;
+    }
   };
 
   return (
@@ -87,6 +198,54 @@ const InsuranceScreen = () => {
           ))}
         </Animatable.View>
       </ScrollView>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={closeModal}
+      >
+        <TouchableWithoutFeedback onPress={closeModal}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback>
+              <Animatable.View
+                animation="fadeInUp"
+                duration={500}
+                style={styles.modalContent}
+              >
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>
+                    Inquire about {selectedInsuranceType}
+                  </Text>
+                  <TouchableOpacity onPress={closeModal}>
+                    <Ionicons name="close-circle-outline" size={30} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+
+                <ScrollView style={styles.formScrollView}>
+                  <View style={styles.formContainer}>
+                    {renderFormFields()}
+                    <Text style={styles.formLabel}>Message (Optional)</Text>
+                    <TextInput
+                      style={[styles.input, styles.textArea]}
+                      placeholder="Tell us what you need"
+                      placeholderTextColor="#aaa"
+                      multiline
+                      numberOfLines={4}
+                    />
+                    <TouchableOpacity
+                      style={styles.submitButton}
+                      onPress={handleSubmit}
+                    >
+                      <Text style={styles.submitButtonText}>Submit Inquiry</Text>
+                    </TouchableOpacity>
+                  </View>
+                </ScrollView>
+              </Animatable.View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
@@ -162,5 +321,68 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 15,
     right: 15,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: "90%",
+    backgroundColor: "#2A2438",
+    borderRadius: 20,
+    padding: 20,
+    maxHeight: "80%", // Added to prevent modal from going off-screen on smaller devices
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  modalTitle: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "bold",
+    maxWidth: "85%",
+  },
+  formScrollView: {
+    maxHeight: 400, // Added to make the form scrollable if it gets too long
+  },
+  formContainer: {
+    width: "100%",
+  },
+  formLabel: {
+    color: "#fff",
+    fontSize: 14,
+    marginBottom: 5,
+    marginTop: 10,
+  },
+  input: {
+    backgroundColor: "#1A1625",
+    color: "#fff",
+    borderRadius: 10,
+    padding: 15,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#4A455A",
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: "top",
+    marginBottom: 20,
+  },
+  submitButton: {
+    backgroundColor: "#4ECDC4",
+    padding: 18,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  submitButtonText: {
+    color: "#1A1625",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
