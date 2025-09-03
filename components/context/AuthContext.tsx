@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (storedUser) {
         setUser(JSON.parse(storedUser));
         setIsAuthenticated(true);
-        const userData = await getDocument('user', JSON.parse(storedUser).email);
+        const userData = await getDocument('login', JSON.parse(storedUser).email);
         if (userData) {
           setUser(userData);
         }
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAuthenticated(true);
       
       // Update the Firestore document using the user's UID as the document ID
-      await updateDocument('user', userData.email, { 
+      await updateDocument('login', userData.email, { 
         email: userData.email,
         lastLogin: new Date().toISOString()
       });
@@ -75,10 +75,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, error: 'Username already taken' };
       }
 
-      await AsyncStorage.setItem('signup', JSON.stringify(userData));
+      await AsyncStorage.setItem('profiledata', JSON.stringify(userData));
       setUser(userData);
       setIsAuthenticated(true);
       await createDocument('user', userData.username, userData);
+      await createDocument('login', userData.email, userData);
       return { success: true };
     } catch (error) {
       console.error('Error storing user data:', error);
