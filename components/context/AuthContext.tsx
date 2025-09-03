@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createDocument, updateDocument, getDocument } from '../../firebase';
 
@@ -7,7 +8,7 @@ type AuthContextType = {
   user: any | null;
   login: (userData: any) => Promise<void>;
   logout: () => Promise<void>;
-  signUp: (userData: any) => Promise<void>;
+  signUp: (userData: any) => Promise<{ success: boolean; error?: string }>;
 
 };
 
@@ -59,6 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('profiledata');
       setUser(null);
       setIsAuthenticated(false);
     } catch (error) {
@@ -68,12 +70,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (userData: any) => {
     try {
+      const existingUser = await getDocument('user', userData.username);
+      if (existingUser) {
+        return { success: false, error: 'Username already taken' };
+      }
+
       await AsyncStorage.setItem('signup', JSON.stringify(userData));
       setUser(userData);
       setIsAuthenticated(true);
-      await createDocument('user', userData.email, userData);
+      await createDocument('user', userData.username, userData);
+      return { success: true };
     } catch (error) {
       console.error('Error storing user data:', error);
+      return { success: false, error: error.message };
     }
   };
 
@@ -91,3 +100,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

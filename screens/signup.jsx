@@ -10,7 +10,7 @@ import {
   Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -31,24 +31,33 @@ export default function SignupScreen({ navigation }) {
 
 
   const handleSignUp = async () => {
-    if (!email || !password) {
-      Alert.alert('Missing info', 'Please enter email and password.');
+    if (!email || !password || !username) {
+      Alert.alert('Missing info', 'Please enter email, password, and username.');
       return;
     }
     if (password !== confirmPassword) {
       Alert.alert('Password mismatch', 'Passwords do not match.');
       return;
     }
+    
     setIsSubmitting(true);
     try {
-      const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-      if (firstname || lastname || username) {
-        await updateProfile(cred.user, {
-          displayName: username || `${firstname} ${lastname}`.trim(),
-        });
-        await signUp({ firstname, lastname, username, email: email.trim() });
+      // First try to create the profile to check username availability
+      const signUpResult = await signUp({ 
+        firstname, 
+        lastname, 
+        username: username.toLowerCase(), 
+        email: email.trim() 
+      });
+
+      if (!signUpResult.success) {
+        Alert.alert('Sign up failed', signUpResult.error);
+        return;
       }
-      Alert.alert('Success', 'Account created. You are now signed in.');
+
+      // If profile creation successful, create auth user
+      await createUserWithEmailAndPassword(auth, email.trim(), password);
+      Alert.alert('Success', 'Account created successfully!');
       navigation.replace('Selection');
     } catch (err) {
       Alert.alert('Sign up failed', err.message);

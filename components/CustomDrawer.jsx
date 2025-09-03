@@ -25,7 +25,7 @@ export default function CustomDrawer(props) {
   const menuItems = [
     { name: 'Prabhavna Manch', icon: 'chatbubble-outline', screen: 'Prabhavna' },
     { name: 'Swadhyay Manch', icon: 'people-outline', screen: 'Swadhyay' },
-    { name: 'Bhajan Writing', icon: 'pencil-outline', screen: 'Bhajan' },
+    // { name: 'Bhajan Writing', icon: 'pencil-outline', screen: 'Bhajan' },
     { name: 'Quiz', icon: 'hourglass-outline', screen: 'Quiz' },
   ];
 
