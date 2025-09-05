@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react'
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View, TouchableOpacity, useWindowDimensions } from 'react-native'
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View, TouchableOpacity, useWindowDimensions, Switch  } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -8,6 +8,10 @@ const Profile = (props) => {
   const { navigation } = props
   const { width } = useWindowDimensions();
   const [user, setUser] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
 
     useEffect(() => {
     const fetchUserData = async () => {
@@ -69,7 +73,7 @@ const Profile = (props) => {
         </View>
 
         {/* Quick Actions */}
-        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: rs(16), gap: rs(12) }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: rs(16), gap: rs(12), alignItems:'center' }}>
           {/* <TouchableOpacity style={[styles.actionBtn, { paddingVertical: rs(10), paddingHorizontal: rs(14) }]}
             activeOpacity={0.9}
             onPress={() => {}}
@@ -84,6 +88,23 @@ const Profile = (props) => {
             <Ionicons name="shield-checkmark-outline" size={rs(18)} color="#6B46C1" />
             <Text style={[styles.actionTextAlt, { marginLeft: rs(8), fontSize: rs(14) }]}>Privacy</Text>
           </TouchableOpacity>
+          <Switch 
+            trackColor={{ false: "#767577", true: "#6B46C1" }}
+            thumbColor={"#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            value={isEnabled}
+            
+          />
+          {
+            isEnabled ? (
+              <Text style={{ color: '#29f31aff', fontSize: rs(14), fontWeight: '600', marginTop: rs(6) }}>Online</Text>
+            ) : (
+              <Text style={{ color: '#f60606ff', fontSize: rs(14), fontWeight: '600', marginTop: rs(6) }}>Offline</Text>
+            )
+          }
+
+         
         </View>
 
         {/* Info Cards */}

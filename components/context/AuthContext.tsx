@@ -51,6 +51,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: userData.email,
         lastLogin: new Date().toISOString()
       });
+      const userprofileData= await getDocument('login', userData.email);
+      console.log(userprofileData);
+      await AsyncStorage.setItem('profiledata', JSON.stringify(userprofileData));
     } catch (error) {
       console.error('Error in login process:', error);
       throw error; // Propagate error to handle it in the login screen
