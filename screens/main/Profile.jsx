@@ -1,7 +1,8 @@
 import React,{useEffect, useState} from 'react'
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View, TouchableOpacity, useWindowDimensions, Switch  } from 'react-native'
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View, TouchableOpacity, useWindowDimensions, Switch, Alert  } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Linking } from 'react-native';
 
 
 const Profile = (props) => {
@@ -10,7 +11,29 @@ const Profile = (props) => {
   const [user, setUser] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const url = "https://www.linkedin.com/in/jainsanyamit"
+
+
+  const toggleSwitch = () => {
+    //here we have to update the status in the firestore db of user and login both
+    // we have to set the status online at the time of sigup and login
+    // and offline at the time of logout
+    //also save this state in the async storage for offline access or any error occur at the backend side
+
+    setIsEnabled(previousState => !previousState)
+  };
+
+  const Planupgrade = async()=>{
+    const supported = await Linking.canOpenURL(url);
+    console.log(supported);
+    if(supported){
+      await Linking.openURL(url);
+    }else{
+      Alert.alert("Failed to Open !");
+    }
+    
+
+  }
 
 
     useEffect(() => {
@@ -129,7 +152,7 @@ const Profile = (props) => {
             <Text style={[styles.cardLabel, { fontSize: rs(12) }]}>Membership</Text>
             <View style={styles.cardRow}>
               <Text style={[styles.cardValue, { fontSize: rs(16) }]}>Free plan</Text>
-              <TouchableOpacity style={{ paddingVertical: rs(6), paddingHorizontal: rs(10), backgroundColor: '#2563EB', borderRadius: rs(8) }}>
+              <TouchableOpacity style={{ paddingVertical: rs(6), paddingHorizontal: rs(10), backgroundColor: '#2563EB', borderRadius: rs(8) }}onPress={Planupgrade}>
                 <Text style={{ color: '#FFFFFF', fontSize: rs(12), fontWeight: '600' }}>Upgrade</Text>
               </TouchableOpacity>
             </View>

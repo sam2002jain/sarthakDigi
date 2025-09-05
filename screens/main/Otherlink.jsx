@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { SafeAreaView, StatusBar, StyleSheet, View, Text, TouchableOpacity, Linking, Alert, ScrollView } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons';
 
 const socialLinks = [
   {
@@ -33,7 +33,8 @@ const socialLinks = [
   },
 ]
 
-const Otherlink = () => {
+const Otherlink = (props) => {
+  const {navigation} = props;
   const openLink = useCallback(async (url) => {
     try {
       const supported = await Linking.canOpenURL(url)
@@ -52,6 +53,9 @@ const Otherlink = () => {
       <StatusBar barStyle="light-content" />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
+          <TouchableOpacity onPress={()=>navigation.goBack()}>
+            <Ionicons name= "arrow-back-outline" size = {26} color = "#ffff"/>
+          </TouchableOpacity>
           <Text style={styles.title}>Stay connected</Text>
           <Text style={styles.subtitle}>Follow Sarthak Digital across platforms</Text>
         </View>
@@ -86,8 +90,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
+    flexDirection:'column',
     marginTop:12,
     marginBottom: 12,
+    gap:8,
   },
   title: {
     color: '#FFFFFF',
