@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createDocument, updateDocument, getDocument } from '../../firebase';
 
@@ -7,7 +8,7 @@ type AuthContextType = {
   user: any | null;
   login: (userData: any) => Promise<void>;
   logout: () => Promise<void>;
-  signUp: (userData: any) => Promise<void>;
+  signUp: (userData: any) => Promise<{ success: boolean; error?: string }>;
 
 };
 
@@ -27,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (storedUser) {
         setUser(JSON.parse(storedUser));
         setIsAuthenticated(true);
-        const userData = await getDocument('user', JSON.parse(storedUser).email);
+        const userData = await getDocument('login', JSON.parse(storedUser).email);
         if (userData) {
           setUser(userData);
         }
@@ -46,10 +47,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAuthenticated(true);
       
       // Update the Firestore document using the user's UID as the document ID
-      await updateDocument('user', userData.email, { 
+      await updateDocument('login', userData.email, { 
         email: userData.email,
         lastLogin: new Date().toISOString()
       });
+      const userprofileData= await getDocument('login', userData.email);
+      console.log(userprofileData);
+      await AsyncStorage.setItem('profiledata', JSON.stringify(userprofileData));
     } catch (error) {
       console.error('Error in login process:', error);
       throw error; // Propagate error to handle it in the login screen
@@ -59,6 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('profiledata');
       setUser(null);
       setIsAuthenticated(false);
     } catch (error) {
@@ -68,12 +73,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (userData: any) => {
     try {
-      await AsyncStorage.setItem('signup', JSON.stringify(userData));
-      setUser(userData);
-      setIsAuthenticated(true);
-      await createDocument('user', userData.email, userData);
+      if (!userData.username) {
+        return { success: false, error: 'Username is required' };
+      }
+
+      // Check for existing user
+      let existingUser;
+      try {
+        existingUser = await getDocument('user', userData.username);
+      } catch (error) {
+        console.error('Error checking existing user:', error);
+        return { success: false, error: 'Network error, please try again' };
+      }
+
+      if (existingUser) {
+        return { success: false, error: 'Username already taken' };
+      }
+
+      // Create user documents
+      try {
+        await createDocument('user', userData.username, userData);
+        await createDocument('login', userData.email, userData);
+        await AsyncStorage.setItem('profiledata', JSON.stringify(userData));
+        setUser(userData);
+        setIsAuthenticated(true);
+        return { success: true };
+      } catch (error) {
+        console.error('Error creating user documents:', error);
+        return { success: false, error: 'Failed to create account, please try again' };
+      }
     } catch (error) {
-      console.error('Error storing user data:', error);
+      console.error('Error in signup process:', error);
+      return { success: false, error: error.message || 'Signup failed' };
     }
   };
 
@@ -91,3 +122,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

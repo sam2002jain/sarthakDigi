@@ -9,17 +9,18 @@ import {
   deleteDoc,
   query,
   where,
-  getDocs
+  getDocs,
+  enableIndexedDbPersistence
 } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC-6hfnv_RgNEwyUGxkXiC4Ay13Sa8n8r4",
-  authDomain: "sarthakdigi-9d56a.firebaseapp.com",
-  projectId: "sarthakdigi-9d56a",
-  storageBucket: "sarthakdigi-9d56a.firebasestorage.app",
-  messagingSenderId: "512104532100",
-  appId: "1:512104532100:web:dae28f1c70ea48c8f75ad1"
+  apiKey: "AIzaSyD6M5SgzgV0I4Z3MICqycv8bke8A-51xKU",
+  authDomain: "sarthakdigi-6071a.firebaseapp.com",
+  projectId: "sarthakdigi-6071a",
+  storageBucket: "sarthakdigi-6071a.firebasestorage.app",
+  messagingSenderId: "35108607121",
+  appId: "1:35108607121:web:a7b71f05e00cf3fd165b30"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -45,6 +46,16 @@ try {
 }
 
 const db = getFirestore(app);
+
+// Enable offline persistence
+enableIndexedDbPersistence(db)
+  .catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+    } else if (err.code === 'unimplemented') {
+      console.warn('The current browser doesn\'t support persistence.');
+    }
+});
 
 // Helper functions for Firestore operations
 export const createDocument = async (collectionName, documentId, data) => {
@@ -99,7 +110,15 @@ export const updateDocument = async (collectionName, documentId, data) => {
 
 export const getDocument = async (collectionName, documentId) => {
   try {
-    const docSnap = await getDoc(doc(db, collectionName, documentId));
+    if (!documentId) {
+      console.error('Document ID is required');
+      return null;
+    }
+    const docRef = doc(db, collectionName, documentId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.metadata.fromCache) {
+      console.log('Data came from cache');
+    }
     return docSnap.exists() ? docSnap.data() : null;
   } catch (error) {
     console.error('Error getting document:', error);

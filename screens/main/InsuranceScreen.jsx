@@ -107,12 +107,6 @@ const InsuranceScreen = () => {
               placeholder="Enter your vehicle number"
               placeholderTextColor="#aaa"
             />
-            <Text style={styles.formLabel}>RC Number</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your RC number"
-              placeholderTextColor="#aaa"
-            />
           </>
         );
       case "Health Insurance":
@@ -146,10 +140,10 @@ const InsuranceScreen = () => {
               placeholderTextColor="#aaa"
               keyboardType="number-pad"
             />
-            <Text style={styles.formLabel}>Desired Coverage Amount</Text>
+            <Text style={styles.formLabel}>Monthly Investement Budget</Text>
             <TextInput
               style={styles.input}
-              placeholder="e.g., $100,000"
+              placeholder="e.g., 1,000"
               placeholderTextColor="#aaa"
               keyboardType="numeric"
             />
