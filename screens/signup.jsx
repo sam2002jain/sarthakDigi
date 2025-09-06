@@ -42,25 +42,29 @@ export default function SignupScreen({ navigation }) {
     
     setIsSubmitting(true);
     try {
-      // First try to create the profile to check username availability
+      // First create auth user
+      const authUser = await createUserWithEmailAndPassword(auth, email.trim(), password);
+      
+      // Then try to create the profile
       const signUpResult = await signUp({ 
         firstname, 
         lastname, 
         username: username.toLowerCase(), 
-        email: email.trim() 
+        email: email.trim(),
+        uid: authUser.user.uid
       });
 
       if (!signUpResult.success) {
+        // If profile creation fails, delete the auth user
+        await authUser.user.delete();
         Alert.alert('Sign up failed', signUpResult.error);
         return;
       }
 
-      // If profile creation successful, create auth user
-      await createUserWithEmailAndPassword(auth, email.trim(), password);
       Alert.alert('Success', 'Account created successfully!');
       navigation.replace('Selection');
     } catch (err) {
-      Alert.alert('Sign up failed', err.message);
+      Alert.alert('Sign up failed', err.message || 'Please check your connection and try again');
     } finally {
       setIsSubmitting(false);
     }

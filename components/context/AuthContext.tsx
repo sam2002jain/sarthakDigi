@@ -73,20 +73,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (userData: any) => {
     try {
-      const existingUser = await getDocument('user', userData.username);
+      if (!userData.username) {
+        return { success: false, error: 'Username is required' };
+      }
+
+      // Check for existing user
+      let existingUser;
+      try {
+        existingUser = await getDocument('user', userData.username);
+      } catch (error) {
+        console.error('Error checking existing user:', error);
+        return { success: false, error: 'Network error, please try again' };
+      }
+
       if (existingUser) {
         return { success: false, error: 'Username already taken' };
       }
 
-      await AsyncStorage.setItem('profiledata', JSON.stringify(userData));
-      setUser(userData);
-      setIsAuthenticated(true);
-      await createDocument('user', userData.username, userData);
-      await createDocument('login', userData.email, userData);
-      return { success: true };
+      // Create user documents
+      try {
+        await createDocument('user', userData.username, userData);
+        await createDocument('login', userData.email, userData);
+        await AsyncStorage.setItem('profiledata', JSON.stringify(userData));
+        setUser(userData);
+        setIsAuthenticated(true);
+        return { success: true };
+      } catch (error) {
+        console.error('Error creating user documents:', error);
+        return { success: false, error: 'Failed to create account, please try again' };
+      }
     } catch (error) {
-      console.error('Error storing user data:', error);
-      return { success: false, error: error.message };
+      console.error('Error in signup process:', error);
+      return { success: false, error: error.message || 'Signup failed' };
     }
   };
 
