@@ -38,6 +38,7 @@ const ZoomSession = (props) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
+  const {navigation} = props;
 
   const currentQuestion = JAIN_QUESTIONS[currentQuestionIndex];
 
@@ -136,6 +137,10 @@ const ZoomSession = (props) => {
         <TouchableOpacity style={styles.lifelineButton} onPress={() => Alert.alert('लाइफलाइन', 'विशेषज्ञ की सलाह लाइफलाइन अभी काम नहीं कर रही है।')}>
           <Ionicons name="school" size={24} color="#FFD700" />
           <Text style={styles.lifelineText}>विशेषज्ञ सलाह</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.lifelineButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="exit" size={24} color="#ab3535ff" />
+          <Text style={styles.lifelineText}>Exit</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

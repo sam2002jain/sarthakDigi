@@ -20,6 +20,7 @@ import BhajanScreen from './screens/main/BhajanScreen';
 import Selection from './screens/main/SelectionScreen';
 import InsuranceScreen from './screens/main/InsuranceScreen';
 import { AuthProvider } from './components/context/AuthContext';
+import Quizselection from './screens/main/Quizselection';
 
 
 
@@ -93,6 +94,35 @@ export default function App() {
                 headerBackVisible: false
               }}
             />
+            <Stack.Screen
+              name="Quizselection"
+              component={Quizselection}
+              options={{
+                headerShown: false,
+                animation: 'slide_from_right',
+                gestureEnabled: false,
+                headerLeft: () => null,
+                headerBackVisible: false
+              }}
+            />
+            <Stack.Screen
+              name="Quiz"
+              component={Quiz}
+              options={{
+                headerShown: false,
+                animation: 'slide_from_right',
+                gestureEnabled: false,
+                headerLeft: () => null,
+                headerBackVisible: false
+              }}
+            />
+            <Stack.Screen name="Bhajan" component={BhajanScreen}  options={{
+                headerShown: false,
+                animation: 'slide_from_right',
+                gestureEnabled: false,
+                headerLeft: () => null,
+                headerBackVisible: false
+              }} />
             <Stack.Screen name="MainApp" component={DrawerNavigation} />
             
             

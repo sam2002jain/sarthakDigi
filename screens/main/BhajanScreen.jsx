@@ -66,11 +66,11 @@ function BhajanScreen(props) {
       {/* Main Header */}
       <View style={styles.header}>
         {/* Check if navigation is available before calling openDrawer */}
-        {navigation?.openDrawer && (
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.openDrawer()}>
-            <Ionicons name="menu" size={24} color="#fff" />
+        
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back-outline" size={24} color="#fff" />
           </TouchableOpacity>
-        )}
+        
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerTitle}>Bhajan Writing</Text>
         </View>
