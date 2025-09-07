@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, BackHandler, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, BackHandler, ScrollView, ImageBackground } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
@@ -21,24 +21,26 @@ const Selection = () => {
       title: "Online Jain Manch",
       icon: "people-outline",
       description: "Connect with the Jain community online",
-      color: "#FF6B6B",
-      route: "MainApp"
+      route: "MainApp",
+      src:require("../../assets/onlinejainmanchlogo.jpeg")
     },
     {
       id: 2,
       title: "Insurance Services",
       icon: "shield-checkmark-outline",
       description: "Explore our insurance solutions",
-      color: "#4ECDC4",
-      route: "Insurance"
+      route: "Insurance",
+      src:require("../../assets/sarthaklogo.jpeg")
+
     },
     {
       id: 3,
       title: "Jainam Print",
       icon: "print-outline",
       description: "Professional printing services",
-      color: "#45B7D1",
-      route: null
+      route: null,
+      src:require("../../assets/jainamprintlogo.jpeg")
+
     }
   ];
 
@@ -69,20 +71,27 @@ const Selection = () => {
           style={styles.cardsContainer}
         >
           {serviceOptions.map((option) => (
-            <TouchableOpacity
-              key={option.id}
-              style={[styles.card, { backgroundColor: option.color }]}
-              onPress={() => handlePress(option)}
-            >
-              <View style={styles.cardIcon}>
-                <Ionicons name={option.icon} size={32} color="#fff" />
-              </View>
-              <Text style={styles.cardTitle}>{option.title}</Text>
-              <Text style={styles.cardDescription}>{option.description}</Text>
-              <View style={styles.arrowContainer}>
-                <Ionicons name="arrow-forward-circle" size={24} color="#fff" />
-              </View>
-            </TouchableOpacity>
+           <TouchableOpacity
+  key={option.id}
+  style={styles.card}
+  onPress={() => handlePress(option)}
+>
+  <ImageBackground
+    source={option.src}
+    style={styles.cardBackground}
+    imageStyle={styles.cardBackgroundImage}
+  >
+    <View style={styles.cardIcon}>
+      <Ionicons name={option.icon} size={32} color="#fff" />
+    </View>
+    <Text style={styles.cardTitle}>{option.title}</Text>
+    <Text style={styles.cardDescription}>{option.description}</Text>
+    <View style={styles.arrowContainer}>
+      <Ionicons name="arrow-forward-circle" size={24} color="#fff" />
+    </View>
+  </ImageBackground>
+</TouchableOpacity>
+
           ))}
         </Animatable.View>
         </ScrollView>
@@ -114,7 +123,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   subtitle: {
-    color: "#fff",
+    color: "#ffffffff",
     fontSize: 20,
     marginBottom: 30,
     textAlign: "center",
@@ -122,26 +131,36 @@ const styles = StyleSheet.create({
   cardsContainer: {
     flexDirection: "column",
   },
-  card: {
-    width: "100%",
-    padding: 20,
-    borderRadius: 15,
-    marginBottom: 20,
-    minHeight: 140,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
+card: {
+  width: "100%",
+  borderRadius: 15,
+  marginBottom: 20,
+  minHeight: 140,
+  overflow: "hidden", // ✅ Ensures rounded corners for image
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 4,
   },
+  shadowOpacity: 0.3,
+  shadowRadius: 4.65,
+  elevation: 8,
+},
+cardBackground: {
+  flex: 1,
+  justifyContent: 'center',
+  padding: 20, // ✅ Move padding here so content isn't cut off
+},
+cardBackgroundImage: {
+  borderRadius: 15,
+  opacity: 0.25, // ✅ Makes the image slightly faded for readability
+},
+
   cardIcon: {
     marginBottom: 15,
   },
   cardTitle: {
-    color: "#fff",
+    color: "#f9f8faff",
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 8,
@@ -156,5 +175,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 15,
     right: 15,
-  }
+  },
+
 });

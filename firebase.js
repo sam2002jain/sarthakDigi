@@ -108,6 +108,34 @@ export const updateDocument = async (collectionName, documentId, data) => {
   }
 };
 
+export const updateActiveStatus = async (collectionName, documentId, isActive) => {
+  try {
+    if (!collectionName || typeof collectionName !== 'string') {
+      console.error('Error: "collectionName" must be a non-empty string.');
+      return false;
+    }
+
+    if (!documentId || typeof documentId !== 'string') {
+      console.error('Error: "documentId" must be a non-empty string.');
+      return false;
+    }
+
+    const docRef = doc(db, collectionName, documentId);
+
+    await updateDoc(docRef, {
+      isActive: isActive,
+      updatedAt: new Date().toISOString()
+    });
+
+    console.log('Active status successfully updated!');
+    return true;
+
+  } catch (error) {
+    console.error('Error updating active status:', error);
+    return false;
+  }
+};
+
 export const getDocument = async (collectionName, documentId) => {
   try {
     if (!documentId) {

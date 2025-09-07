@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-// --- 1. GAME DATA: Sample Jainism Questions ---
 const JAIN_QUESTIONS = [
   {
     question: 'जैन धर्म के प्रथम तीर्थंकर कौन थे?',
