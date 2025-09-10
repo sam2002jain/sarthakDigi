@@ -21,11 +21,16 @@ export default function CustomDrawer(props) {
     }
   };
 
-
+  // Requested sequence
   const menuItems = [
+    { name: 'Manch Ek Parichay', icon: 'information-circle-outline', screen: 'ManchEkParichay' },
+    { name: 'Wall Of Frame', icon: 'image-outline', screen: 'WallOfFrame' },
+    { name: 'AVM Pal', icon: 'time-outline', screen: 'AVMPal' },
+    { name: 'Pub Book', icon: 'book-outline', screen: 'PubBook' },
+    { name: 'Written Collection', icon: 'document-text-outline', screen: 'WrittenCollection' },
+    { name: 'Prashan Manch', icon: 'help-circle-outline', screen: 'PrashanManch' },
     { name: 'Prabhavna Manch', icon: 'chatbubble-outline', screen: 'Prabhavna' },
-    { name: 'Swadhyay Manch', icon: 'people-outline', screen: 'Swadhyay' },
-    // { name: 'Bhajan Writing', icon: 'pencil-outline', screen: 'Bhajan' },
+    { name: 'Sadbhavna Manch', icon: 'happy-outline', screen: 'SadbhavnaManch' },
     { name: 'Quiz', icon: 'hourglass-outline', screen: 'Quizselection' },
   ];
 

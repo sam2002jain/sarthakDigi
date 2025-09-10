@@ -32,6 +32,38 @@ const Quizselection = () => {
       color: "#4ECDC4",
       route: "Bhajan"
     },
+    {
+      id: 3,
+      title: "Quick and fast",
+      icon: "podium-outline",
+      description: "Quick and fast quiz",
+      color: "#b4b4b4",
+      route: "Bhajan"
+    },
+    {
+      id: 4,
+      title: "Prashan Link",
+      icon: "pencil-outline",
+      description: "Prashan Link",
+      color: "#C423B4",
+      route: "Bhajan"
+    },
+    {
+      id: 5,
+      title: "Vaad-Vivad",
+      icon: "trophy-outline",
+      description: "Participate in Vaad-Vivad",
+      color: "#A3E432",
+      route: "Bhajan"
+    },
+    {
+      id: 6,
+      title: "Other Quiz",
+      icon: "pencil-outline",
+      description: "Participate in Other Quiz",
+      color: "#A32b3C",
+      route: "Bhajan"
+    },
     
   ];
 

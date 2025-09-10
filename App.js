@@ -21,7 +21,13 @@ import Selection from './screens/main/SelectionScreen';
 import InsuranceScreen from './screens/main/InsuranceScreen';
 import { AuthProvider } from './components/context/AuthContext';
 import Quizselection from './screens/main/Quizselection';
-
+import ManchEkParichayScreen from './screens/main/ManchEkParichayScreen';
+import WallOfFrameScreen from './screens/main/WallOfFrameScreen';
+import AVMPalScreen from './screens/main/AVMPalScreen';
+import PubBookScreen from './screens/main/PubBookScreen';
+import WrittenCollectionScreen from './screens/main/WrittenCollectionScreen';
+import PrashanManchScreen from './screens/main/PrashanManchScreen';
+import SadbhavnaManchScreen from './screens/main/SadbhavnaManchScreen';
 
 
 
@@ -42,15 +48,23 @@ function DrawerNavigation() {
         },
       }}
     >
-      
+      {/* Requested sequence */}
+      <Drawer.Screen name="ManchEkParichay" component={ManchEkParichayScreen} />
+      <Drawer.Screen name="WallOfFrame" component={WallOfFrameScreen} />
+      <Drawer.Screen name="AVMPal" component={AVMPalScreen} />
+      <Drawer.Screen name="PubBook" component={PubBookScreen} />
+      <Drawer.Screen name="WrittenCollection" component={WrittenCollectionScreen} />
+      <Drawer.Screen name="PrashanManch" component={PrashanManchScreen} />
       <Drawer.Screen name="Prabhavna" component={Prabhavna} />
+      <Drawer.Screen name="SadbhavnaManch" component={SadbhavnaManchScreen} />
+      <Drawer.Screen name="Quiz" component={Quiz} />
+
+      {/* Existing */}
+      <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen name="Otherlink" component={Otherlink} />
       <Drawer.Screen name="Swadhyay" component={Swadhyay} />
       <Drawer.Screen name="Bhajan" component={BhajanScreen} />
       <Drawer.Screen name="Selection" component={Selection} />
-      <Drawer.Screen name="Quiz" component={Quiz} />
-      <Drawer.Screen name="Profile" component={Profile} />
-      <Drawer.Screen name="Otherlink" component={Otherlink} />
-      
     </Drawer.Navigator>
   );
 }
