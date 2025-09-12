@@ -15,17 +15,17 @@ const ModernSparkleStar = (props) => (
     */}
     <Path
       d="M50 0 Q 60 40 100 50 Q 60 60 50 100 Q 40 60 0 50 Q 40 40 50 0 Z M50 22 Q 45 45 28 50 Q 45 55 50 78 Q 55 55 72 50 Q 55 45 50 22 Z"
-      fill="#C8B6FF"
+      fill="#9676f8ff"
     />
     {/* These are the two smaller sparkles. They are simple 4-pointed stars.
     */}
     <Path
       d="M88 15 L 90 20 L 95 22 L 90 25 L 88 30 L 86 25 L 81 22 L 86 20 Z"
-      fill="#C8B6FF"
+      fill="#9676f8ff"
     />
     <Path
       d="M15 75 L 17 80 L 22 82 L 17 85 L 15 90 L 13 85 L 8 82 L 13 80 Z"
-      fill="#C8B6FF"
+      fill="#9676f8ff"
     />
   </Svg>
 );

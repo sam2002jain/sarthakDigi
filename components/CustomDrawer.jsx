@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor:'#eea95aff'
   },
 
   brandText: {

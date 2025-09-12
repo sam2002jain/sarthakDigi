@@ -86,7 +86,7 @@ const Quizselection = () => {
       </View>
 
       <View style={styles.content}>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
         <Animatable.View
           animation="fadeInUp"
           duration={1500}
@@ -120,12 +120,12 @@ export default Quizselection;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1A1625",
+    backgroundColor: "#fcfcfdff",
   },
   header: {
     padding: 20,
     paddingTop: 60,
-    backgroundColor: "#2A2438",
+    backgroundColor: "#f69a4fff",
     alignItems: 'center'
   },
   headerTitle: {
