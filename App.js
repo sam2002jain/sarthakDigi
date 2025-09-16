@@ -28,6 +28,7 @@ import PubBookScreen from './screens/main/PubBookScreen';
 import WrittenCollectionScreen from './screens/main/WrittenCollectionScreen';
 import PrashanManchScreen from './screens/main/PrashanManchScreen';
 import SadbhavnaManchScreen from './screens/main/SadbhavnaManchScreen';
+import KBSuploadScreen from './screens/admin/KBSuploadScreen';
 
 
 
@@ -67,6 +68,16 @@ function DrawerNavigation() {
       <Drawer.Screen name="Selection" component={Selection} />
     </Drawer.Navigator>
   );
+}
+
+function AdminStack(){
+  return (
+    <Stack.Navigator
+    initialRouteName='UploadExcel'>
+      <Stack.Screen name="UploadExcel" component={KBSuploadScreen} />
+
+    </Stack.Navigator>
+  )
 }
 
 export default function App() {
@@ -138,6 +149,9 @@ export default function App() {
                 headerBackVisible: false
               }} />
             <Stack.Screen name="MainApp" component={DrawerNavigation} />
+            
+            <Stack.Screen name="Admin" component={AdminStack} />
+
             
             
           </Stack.Navigator>
