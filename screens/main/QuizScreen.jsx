@@ -3,10 +3,9 @@ import { SafeAreaView, StatusBar, StyleSheet, Text, View, TouchableOpacity, Aler
 import { Ionicons } from '@expo/vector-icons'
 import { getDocument, queryDocuments, updateDocument, createDocument } from '../../firebase'
 
-const GROUPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-
 const QuizScreen = ({navigation}) => {
   const [phase, setPhase] = useState('fff') // 'fff' | 'quiz' | 'done'
+  const [availableGroups, setAvailableGroups] = useState(['A', 'B', 'C']) // Default groups, will be updated
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0)
   const [question, setQuestion] = useState(null)
   const [options, setOptions] = useState([])
@@ -21,7 +20,11 @@ const QuizScreen = ({navigation}) => {
   const [fffSelected, setFffSelected] = useState(null)
   const [fffLocked, setFffLocked] = useState(false)
 
-  const group = useMemo(() => GROUPS[currentGroupIndex] || 'A', [currentGroupIndex])
+  const group = useMemo(() => availableGroups[currentGroupIndex] || 'A', [currentGroupIndex, availableGroups])
+
+  useEffect(() => {
+    loadAvailableGroups()
+  }, [])
 
   useEffect(() => {
     if (phase === 'fff') {
@@ -60,6 +63,31 @@ const QuizScreen = ({navigation}) => {
     }
   }
 
+  async function loadAvailableGroups() {
+    try {
+      // Check which groups exist in the Quizzes collection
+      const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
+      const availableGroupsList = []
+      
+      for (const groupId of groups) {
+        try {
+          const groupDoc = await getDocument('Quizzes', groupId)
+          if (groupDoc && groupDoc.questions && groupDoc.questions.length > 0) {
+            availableGroupsList.push(groupId)
+          }
+        } catch (e) {
+          // Group doesn't exist, continue
+        }
+      }
+      
+      if (availableGroupsList.length > 0) {
+        setAvailableGroups(availableGroupsList)
+      }
+    } catch (e) {
+      console.error('Error loading available groups:', e)
+    }
+  }
+
   async function loadFffQuestion() {
     try {
       // Expect a collection 'fff' with docs containing {question, options:[...], answerIndex}
@@ -77,23 +105,30 @@ const QuizScreen = ({navigation}) => {
 
   async function loadQuestionForGroup(g) {
     try {
-      // Expect collection 'questions' with fields { group: 'A'|'B'|..., text, options:[...], answerIndex }
-      const docs = await queryDocuments('questions', 'group', '==', g)
-      const q = docs && docs.length ? docs[Math.floor(Math.random() * docs.length)] : null
-      if (q) {
-        setQuestion(q)
+      // Fetch the quiz group document from 'Quizzes' collection
+      const groupDoc = await getDocument('Quizzes', g)
+      if (groupDoc && groupDoc.questions && groupDoc.questions.length > 0) {
+        // Select a random question from the group
+        const randomIndex = Math.floor(Math.random() * groupDoc.questions.length)
+        const q = groupDoc.questions[randomIndex]
+        
+        setQuestion({
+          text: q.question,
+          answerIndex: q.correctAnswerIndex
+        })
         setOptions(q.options || [])
         setSelected(null)
         setLocked(false)
       } else {
         // Fallback placeholder
-        setQuestion({ text: `Sample question from group ${g}?`, answerIndex: 1 })
+        setQuestion({ text: `No questions available for group ${g}`, answerIndex: 1 })
         setOptions(['Option 1', 'Option 2', 'Option 3', 'Option 4'])
         setSelected(null)
         setLocked(false)
       }
     } catch (e) {
-      setQuestion({ text: `Sample question from group ${g}?`, answerIndex: 1 })
+      console.error('Error loading question for group:', e)
+      setQuestion({ text: `Error loading question for group ${g}`, answerIndex: 1 })
       setOptions(['Option 1', 'Option 2', 'Option 3', 'Option 4'])
       setSelected(null)
       setLocked(false)
@@ -115,9 +150,11 @@ const QuizScreen = ({navigation}) => {
     // Evaluate and proceed
     const isCorrect = selected === (question?.answerIndex ?? -1)
     if (isCorrect) {
+      Alert.alert('Correct Answer', 'lets proceed to the next question');
+      setLocked(false)
       // Next group
       const nextIndex = currentGroupIndex + 1
-      if (nextIndex < GROUPS.length) {
+      if (nextIndex < availableGroups.length) {
         setCurrentGroupIndex(nextIndex)
         setTimeout(() => {
           setPhase('quiz')
@@ -134,7 +171,9 @@ const QuizScreen = ({navigation}) => {
 
   const handleTimeUp = () => {
     Alert.alert('Time Up', 'No answer was locked in time.')
-    setLocked(true)
+    setLocked(true);
+    setPhase('done')
+
   }
 
   // Lifelines
@@ -247,6 +286,9 @@ const QuizScreen = ({navigation}) => {
       {phase === 'done' && (
         <View style={styles.section}>
           <Text style={styles.title}>Quiz Completed</Text>
+          <TouchableOpacity onPress={() => navigation.replace('Quizselection')}>
+            <Text style={{color:'#E40BDC', fontSize:18, fontWeight:'700'}}>Restart</Text>
+          </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>
