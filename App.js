@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginScreen from './screens/login';
 import SignupScreen from './screens/signup';
+import PhoneAuthScreen from './screens/PhoneAuthScreen';
 import ForgetPassScreen from './screens/forgetpass';
 import CustomDrawer from './components/CustomDrawer';
 import Splash from './screens/SplashScreen';
@@ -21,7 +22,14 @@ import Selection from './screens/main/SelectionScreen';
 import InsuranceScreen from './screens/main/InsuranceScreen';
 import { AuthProvider } from './components/context/AuthContext';
 import Quizselection from './screens/main/Quizselection';
-
+import ManchEkParichayScreen from './screens/main/ManchEkParichayScreen';
+import WallOfFrameScreen from './screens/main/WallOfFrameScreen';
+import AVMPalScreen from './screens/main/AVMPalScreen';
+import PubBookScreen from './screens/main/PubBookScreen';
+import WrittenCollectionScreen from './screens/main/WrittenCollectionScreen';
+import PrashanManchScreen from './screens/main/PrashanManchScreen';
+import SadbhavnaManchScreen from './screens/main/SadbhavnaManchScreen';
+import KBSuploadScreen from './screens/admin/KBSuploadScreen';
 
 
 
@@ -42,17 +50,35 @@ function DrawerNavigation() {
         },
       }}
     >
-      
-      <Drawer.Screen name="Prabhavna" component={Prabhavna} />
-      <Drawer.Screen name="Swadhyay" component={Swadhyay} />
-      <Drawer.Screen name="Bhajan" component={BhajanScreen} />
+      {/* Requested sequence */}
+      <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="Selection" component={Selection} />
       <Drawer.Screen name="Quiz" component={Quiz} />
-      <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen name="ManchEkParichay" component={ManchEkParichayScreen} />
+      <Drawer.Screen name="WallOfFrame" component={WallOfFrameScreen} />
+      <Drawer.Screen name="AVMPal" component={AVMPalScreen} />
+      <Drawer.Screen name="PubBook" component={PubBookScreen} />
+      <Drawer.Screen name="WrittenCollection" component={WrittenCollectionScreen} />
+      <Drawer.Screen name="PrashanManch" component={PrashanManchScreen} />
+      <Drawer.Screen name="Prabhavna" component={Prabhavna} />
+      <Drawer.Screen name="SadbhavnaManch" component={SadbhavnaManchScreen} />
+
+      {/* Existing */}
       <Drawer.Screen name="Otherlink" component={Otherlink} />
-      
+      <Drawer.Screen name="Swadhyay" component={Swadhyay} />
+      <Drawer.Screen name="Bhajan" component={BhajanScreen} />
     </Drawer.Navigator>
   );
+}
+
+function AdminStack(){
+  return (
+    <Stack.Navigator
+    initialRouteName='UploadExcel'>
+      <Stack.Screen name="UploadExcel" component={KBSuploadScreen} />
+
+    </Stack.Navigator>
+  )
 }
 
 export default function App() {
@@ -71,6 +97,7 @@ export default function App() {
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Auth" component={LoginScreen} />
             <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen name="PhoneAuth" component={PhoneAuthScreen} />
             <Stack.Screen name="ForgetPass" component={ForgetPassScreen} />
             <Stack.Screen 
               name="Selection" 
@@ -124,6 +151,9 @@ export default function App() {
                 headerBackVisible: false
               }} />
             <Stack.Screen name="MainApp" component={DrawerNavigation} />
+            
+            <Stack.Screen name="Admin" component={AdminStack} />
+
             
             
           </Stack.Navigator>

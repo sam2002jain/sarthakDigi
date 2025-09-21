@@ -3,7 +3,7 @@ import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View, TouchableO
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Linking } from 'react-native';
-
+import { createDocument, updateDocument, deleteDocument, getDocument } from '../../firebase';
 
 const Profile = (props) => {
   const { navigation } = props
@@ -14,13 +14,32 @@ const Profile = (props) => {
   const url = "https://www.linkedin.com/in/jainsanyamit"
 
 
-  const toggleSwitch = () => {
-    //here we have to update the status in the firestore db of user and login both
-    // we have to set the status online at the time of sigup and login
-    // and offline at the time of logout
-    //also save this state in the async storage for offline access or any error occur at the backend side
+  const toggleSwitch = async () => {
+    try {
+      const documentId = user?.username || user?.email || '';
+      if (!documentId) return;
 
-    setIsEnabled(previousState => !previousState)
+      const newStatus = !isEnabled;
+      const targetCollection = newStatus ? 'online' : 'offline';
+      const oppositeCollection = newStatus ? 'offline' : 'online';
+
+      // Upsert into the target collection
+      const existing = await getDocument(targetCollection, documentId);
+      if (existing) {
+        await updateDocument(targetCollection, documentId, { isActive: newStatus });
+      } else {
+        await createDocument(targetCollection, documentId, { isActive: newStatus });
+      }
+
+      // Remove from the opposite collection if exists
+      try {
+        await deleteDocument(oppositeCollection, documentId);
+      } catch (_) {}
+
+      setIsEnabled(newStatus)
+    } catch (e) {
+      console.warn('Failed to update status', e);
+    }
   };
 
   const Planupgrade = async()=>{
@@ -148,7 +167,7 @@ const Profile = (props) => {
             </View>
           </View>
 
-          <View style={[styles.card, { padding: rs(14), borderRadius: rs(14) }]}>
+          <View style={[styles.card, { padding: rs(14), borderRadius: rs(14) }]}> 
             <Text style={[styles.cardLabel, { fontSize: rs(12) }]}>Membership</Text>
             <View style={styles.cardRow}>
               <Text style={[styles.cardValue, { fontSize: rs(16) }]}>Free plan</Text>

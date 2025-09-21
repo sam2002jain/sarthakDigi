@@ -5,6 +5,7 @@ import { createDocument, updateDocument, getDocument } from '../../firebase';
 
 type AuthContextType = {
   isAuthenticated: boolean;
+  isAdmin: boolean;
   user: any | null;
   login: (userData: any) => Promise<void>;
   logout: () => Promise<void>;
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const[isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState<any | null>(null);
 
   useEffect(() => {
@@ -26,12 +28,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const storedUser = await AsyncStorage.getItem('user');
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        setUser(parsed);
         setIsAuthenticated(true);
-        const userData = await getDocument('login', JSON.parse(storedUser).email);
-        if (userData) {
-          setUser(userData);
-        }
+        // Set admin immediately from stored user to avoid race on splash
+        const storedEmail = (parsed?.email || '').toLowerCase();
+        setIsAdmin(storedEmail === 'admin@gmail.com');
+        const userData = await getDocument('login', parsed.email);
+        const adminEmail = (userData?.email || parsed?.email || '').toLowerCase();
+        setIsAdmin(adminEmail === 'admin@gmail.com');
+        if (userData) setUser(userData);
+       
         console.log(userData);
         await AsyncStorage.setItem('profiledata', JSON.stringify(userData));
       }
@@ -42,11 +49,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (userData: any) => {
     try {
+      const adminEmail = (userData?.email || '').toLowerCase();
       await AsyncStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
+      setIsAdmin(adminEmail === 'admin@gmail.com');
       setIsAuthenticated(true);
       
-      // Update the Firestore document using the user's UID as the document ID
+      // Update the Firestore document using the user's email as the document ID
       await updateDocument('login', userData.email, { 
         email: userData.email,
         lastLogin: new Date().toISOString()
@@ -109,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, signUp }}>
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, user, login, logout, signUp }}>
       {children}
     </AuthContext.Provider>
   );

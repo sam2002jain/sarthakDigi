@@ -1,271 +1,326 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-  Alert,
-  Platform,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { SafeAreaView, StatusBar, StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { getDocument, queryDocuments, updateDocument, createDocument } from '../../firebase'
 
-// --- 1. GAME DATA: Sample Jainism Questions ---
-const JAIN_QUESTIONS = [
-  {
-    question: 'जैन धर्म के प्रथम तीर्थंकर कौन थे?',
-    options: ['पार्श्वनाथ', 'महावीर स्वामी', 'ऋषभदेव', 'नेमिनाथ'],
-    answer: 'ऋषभदेव',
-  },
-  {
-    question: 'भगवान महावीर का जन्म स्थान कहाँ है?',
-    options: ['बोधगया', 'वैशाली (कुण्डग्राम)', 'पावापुरी', 'लुम्बिनी'],
-    answer: 'वैशाली (कुण्डग्राम)',
-  },
-  {
-    question: 'जैन धर्म में "त्रिरत्न" में से क्या शामिल नहीं है?',
-    options: ['सम्यक् दर्शन', 'सम्यक् ज्ञान', 'सम्यक् आचरण', 'सम्यक् तप'],
-    answer: 'सम्यक् तप', // The main three are Darshan, Gyan, Charitra (Tapa is a part of Charitra or separately taught, but generally not included in the main 'Triratna' list of the path to liberation)
-  },
-  {
-    question: '"सल्लेखना" या "संथारा" किस धर्म से संबंधित एक विधि है?',
-    options: ['बौद्ध धर्म', 'वैष्णव धर्म', 'जैन धर्म', 'सिख धर्म'],
-    answer: 'जैन धर्म',
-  },
-];
+const QuizScreen = ({navigation}) => {
+  const [phase, setPhase] = useState('fff') // 'fff' | 'quiz' | 'done'
+  const [availableGroups, setAvailableGroups] = useState(['A', 'B', 'C']) // Default groups, will be updated
+  const [currentGroupIndex, setCurrentGroupIndex] = useState(0)
+  const [question, setQuestion] = useState(null)
+  const [options, setOptions] = useState([])
+  const [selected, setSelected] = useState(null)
+  const [locked, setLocked] = useState(false)
+  const [lifelines, setLifelines] = useState({ fifty: true, audience: true, expert: true, friend: true })
+  const [timer, setTimer] = useState(30)
+  const timerRef = useRef(null)
 
-const ZoomSession = (props) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [quizFinished, setQuizFinished] = useState(false);
-  const {navigation} = props;
+  // Fastest Finger First setup (simplified for single-device demo)
+  const [fffQuestion, setFffQuestion] = useState(null)
+  const [fffSelected, setFffSelected] = useState(null)
+  const [fffLocked, setFffLocked] = useState(false)
 
-  const currentQuestion = JAIN_QUESTIONS[currentQuestionIndex];
+  const group = useMemo(() => availableGroups[currentGroupIndex] || 'A', [currentGroupIndex, availableGroups])
 
-  // --- 2. GAME LOGIC ---
+  useEffect(() => {
+    loadAvailableGroups()
+  }, [])
 
-  const handleAnswer = (selectedOption) => {
-    if (quizFinished) return;
-
-    // Check if the selected answer is correct
-    if (selectedOption === currentQuestion.answer) {
-      setScore(score + 1);
-      Alert.alert('सही उत्तर!', 'आपका जवाब सही है।');
-    } else {
-      Alert.alert('गलत उत्तर!', `सही जवाब: ${currentQuestion.answer}`);
+  useEffect(() => {
+    if (phase === 'fff') {
+      loadFffQuestion()
     }
+  }, [phase])
 
-    // Move to the next question or finish the quiz
-    const nextQuestionIndex = currentQuestionIndex + 1;
-    if (nextQuestionIndex < JAIN_QUESTIONS.length) {
-      setCurrentQuestionIndex(nextQuestionIndex);
-    } else {
-      setQuizFinished(true);
-      Alert.alert('क्विज समाप्त!', `आप 'शिरामणी' बनने के कितने करीब हैं: ${score} / ${JAIN_QUESTIONS.length}`);
+  useEffect(() => {
+    if (phase === 'quiz') {
+      loadQuestionForGroup(group)
+      startTimer(30)
     }
-  };
+    return () => stopTimer()
+  }, [phase, group])
 
-  const resetQuiz = () => {
-    setCurrentQuestionIndex(0);
-    setScore(0);
-    setQuizFinished(false);
-  };
+  const startTimer = (secs) => {
+    stopTimer()
+    setTimer(secs)
+    timerRef.current = setInterval(() => {
+      setTimer((t) => {
+        if (t <= 1) {
+          clearInterval(timerRef.current)
+          timerRef.current = null
+          if (!locked) handleTimeUp()
+          return 0
+        }
+        return t - 1
+      })
+    }, 1000)
+  }
 
-  // --- 3. UI RENDERING ---
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+  }
 
-  const renderOptions = () => {
-    // Label options A, B, C, D like in KBC
-    const labels = ['A', 'B', 'C', 'D'];
-    
-    return currentQuestion.options.map((option, index) => (
-      <TouchableOpacity
-        key={index}
-        style={styles.optionButton}
-        onPress={() => handleAnswer(option)}
-        disabled={quizFinished}
-      >
-        <Text style={styles.optionLabel}>{labels[index]}.</Text>
-        <Text style={styles.optionText}>{option}</Text>
-      </TouchableOpacity>
-    ));
-  };
+  async function loadAvailableGroups() {
+    try {
+      // Check which groups exist in the Quizzes collection
+      const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
+      const availableGroupsList = []
+      
+      for (const groupId of groups) {
+        try {
+          const groupDoc = await getDocument('Quizzes', groupId)
+          if (groupDoc && groupDoc.questions && groupDoc.questions.length > 0) {
+            availableGroupsList.push(groupId)
+          }
+        } catch (e) {
+          // Group doesn't exist, continue
+        }
+      }
+      
+      if (availableGroupsList.length > 0) {
+        setAvailableGroups(availableGroupsList)
+      }
+    } catch (e) {
+      console.error('Error loading available groups:', e)
+    }
+  }
 
-  if (quizFinished) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.resultBox}>
-          <Text style={styles.headerText}>परिणाम</Text>
-          <Text style={styles.resultText}>
-            आपने **{score}** में से **{JAIN_QUESTIONS.length}** सही जवाब दिए।
-          </Text>
-          <TouchableOpacity style={styles.resetButton} onPress={resetQuiz}>
-            <Text style={styles.buttonText}>फिर से खेलें</Text>
-            <Ionicons name="reload" size={20} color="#fff" style={{ marginLeft: 10 }} />
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
+  async function loadFffQuestion() {
+    try {
+      // Expect a collection 'fff' with docs containing {question, options:[...], answerIndex}
+      const docs = await queryDocuments('fff', 'active', '==', true)
+      const q = docs && docs.length ? docs[Math.floor(Math.random() * docs.length)] : null
+      if (q) {
+        setFffQuestion(q)
+      } else {
+        setFffQuestion({ question: 'Arrange these in ascending order: 2, 8, 4, 6', options: ['2,4,6,8', '2,6,4,8', '8,6,4,2', '2,8,6,4'], answerIndex: 0 })
+      }
+    } catch (e) {
+      setFffQuestion({ question: 'Arrange these in ascending order: 2, 8, 4, 6', options: ['2,4,6,8', '2,6,4,8', '8,6,4,2', '2,8,6,4'], answerIndex: 0 })
+    }
+  }
+
+  async function loadQuestionForGroup(g) {
+    try {
+      // Fetch the quiz group document from 'Quizzes' collection
+      const groupDoc = await getDocument('Quizzes', g)
+      if (groupDoc && groupDoc.questions && groupDoc.questions.length > 0) {
+        // Select a random question from the group
+        const randomIndex = Math.floor(Math.random() * groupDoc.questions.length)
+        const q = groupDoc.questions[randomIndex]
+        
+        setQuestion({
+          text: q.question,
+          answerIndex: q.correctAnswerIndex
+        })
+        setOptions(q.options || [])
+        setSelected(null)
+        setLocked(false)
+      } else {
+        // Fallback placeholder
+        setQuestion({ text: `No questions available for group ${g}`, answerIndex: 1 })
+        setOptions(['Option 1', 'Option 2', 'Option 3', 'Option 4'])
+        setSelected(null)
+        setLocked(false)
+      }
+    } catch (e) {
+      console.error('Error loading question for group:', e)
+      setQuestion({ text: `Error loading question for group ${g}`, answerIndex: 1 })
+      setOptions(['Option 1', 'Option 2', 'Option 3', 'Option 4'])
+      setSelected(null)
+      setLocked(false)
+    }
+  }
+
+  const confirmLock = () => {
+    if (selected == null) return
+    Alert.alert('Lock Answer?', 'Are you sure you want to lock this answer?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Lock', style: 'default', onPress: () => lockAnswer() },
+    ])
+  }
+
+  const lockAnswer = () => {
+    if (selected == null) return
+    setLocked(true)
+    stopTimer()
+    // Evaluate and proceed
+    const isCorrect = selected === (question?.answerIndex ?? -1)
+    if (isCorrect) {
+      Alert.alert('Correct Answer', 'lets proceed to the next question');
+      setLocked(false)
+      // Next group
+      const nextIndex = currentGroupIndex + 1
+      if (nextIndex < availableGroups.length) {
+        setCurrentGroupIndex(nextIndex)
+        setTimeout(() => {
+          setPhase('quiz')
+        }, 500)
+      } else {
+        setPhase('done')
+      }
+    } else {
+      Alert.alert('Wrong Answer?', 'Please Restart the game?', [
+        { text: 'Ok', style: 'default', onPress: () => navigation.replace('Quizselection') },
+      ])
+    }
+  }
+
+  const handleTimeUp = () => {
+    Alert.alert('Time Up', 'No answer was locked in time.')
+    setLocked(true);
+    setPhase('done')
+
+  }
+
+  // Lifelines
+  const useFifty = () => {
+    if (!lifelines.fifty || !question) return
+    const correct = question.answerIndex
+    const indices = [0,1,2,3]
+    const toHide = indices.filter(i => i !== correct).sort(() => 0.5 - Math.random()).slice(0,2)
+    const newOptions = options.map((opt, idx) => (toHide.includes(idx) ? '' : opt))
+    setOptions(newOptions)
+    setLifelines({ ...lifelines, fifty: false })
+  }
+
+  const useAudience = () => {
+    if (!lifelines.audience) return
+    Alert.alert('Audience Poll', 'Audience suggests option with highest votes.')
+    setLifelines({ ...lifelines, audience: false })
+  }
+
+  const useExpert = () => {
+    if (!lifelines.expert) return
+    Alert.alert('Expert Advice', 'Expert hints at the most likely correct answer.')
+    setLifelines({ ...lifelines, expert: false })
+  }
+
+  const useFriend = () => {
+    if (!lifelines.friend) return
+    Alert.alert('Ask a Friend', 'Share the question with a friend for help.')
+    setLifelines({ ...lifelines, friend: false })
+  }
+
+  const submitFff = async () => {
+    if (fffSelected == null || fffLocked) return
+    setFffLocked(true)
+    const correct = fffQuestion?.answerIndex
+    const isCorrect = fffSelected === correct
+    try {
+      const timestamp = Date.now()
+      await createDocument('fff_submissions', String(timestamp), {
+        selected: fffSelected,
+        isCorrect,
+        createdAt: new Date().toISOString(),
+      })
+    } catch (_) {}
+    if (isCorrect) {
+      setPhase('quiz')
+    } else {
+      Alert.alert('Not Fastest/Correct', 'Try again next round.')
+    }
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>कौन बनेगा शिरोमणि</Text>
-        <Text style={styles.scoreText}>सही जवाब: {score}</Text>
-      </View>
+      <StatusBar barStyle="light-content" />
+      {phase === 'fff' && (
+        <View style={styles.section}>
+          <Text style={styles.title}>Fastest Finger First</Text>
+          <Text style={styles.question}>{fffQuestion?.question || 'Loading...'}</Text>
+          <View style={styles.options}>
+            {(fffQuestion?.options || []).map((opt, idx) => (
+              <TouchableOpacity key={idx} style={[styles.option, fffSelected===idx && styles.optionSelected]} onPress={() => setFffSelected(idx)} disabled={fffLocked}>
+                <Text style={styles.optionText}>{opt}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TouchableOpacity style={styles.lockBtn} onPress={submitFff} disabled={fffLocked || fffSelected==null}>
+            <Ionicons name="flash" size={18} color="#fff" />
+            <Text style={styles.lockText}>Submit</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
-      <View style={styles.questionContainer}>
-        <Text style={styles.questionNumber}>प्रश्न {currentQuestionIndex + 1} / {JAIN_QUESTIONS.length}</Text>
-        <Text style={styles.questionText}>
-          {currentQuestion.question}
-        </Text>
-      </View>
+      {phase === 'quiz' && (
+        <View style={styles.section}>
+          <Text style={styles.groupBadge}>Group {group}</Text>
+          <Text style={styles.timer}>⏱ {timer}s</Text>
+          <Text style={styles.question}>{question?.text || 'Loading...'}</Text>
+          <View style={styles.options}>
+            {options.map((opt, idx) => (
+              <TouchableOpacity key={idx} style={[styles.option, selected===idx && styles.optionSelected, opt==='' && styles.optionHidden]} onPress={() => setSelected(idx)} disabled={locked || opt===''}>
+                <Text style={styles.optionText}>{opt || ' '}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
-      <View style={styles.optionsContainer}>
-        {renderOptions()}
-      </View>
+          <View style={styles.actionsRow}>
+            <TouchableOpacity style={[styles.lockBtn, { opacity: selected==null?0.5:1 }]} onPress={confirmLock} disabled={selected==null || locked}>
+              <Ionicons name="lock-closed" size={18} color="#fff" />
+              <Text style={styles.lockText}>Lock</Text>
+            </TouchableOpacity>
 
-      <View style={styles.lifelinesContainer}>
-        <TouchableOpacity style={styles.lifelineButton} onPress={() => Alert.alert('लाइफलाइन', '50:50 लाइफलाइन अभी काम नहीं कर रही है।')}>
-          <Ionicons name="flash" size={24} color="#FFD700" />
-          <Text style={styles.lifelineText}>50:50</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.lifelineButton} onPress={() => Alert.alert('लाइफलाइन', 'दर्शक पोल लाइफलाइन अभी काम नहीं कर रही है।')}>
-          <Ionicons name="people" size={24} color="#FFD700" />
-          <Text style={styles.lifelineText}>दर्शक पोल</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.lifelineButton} onPress={() => Alert.alert('लाइफलाइन', 'विशेषज्ञ की सलाह लाइफलाइन अभी काम नहीं कर रही है।')}>
-          <Ionicons name="school" size={24} color="#FFD700" />
-          <Text style={styles.lifelineText}>विशेषज्ञ सलाह</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.lifelineButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="exit" size={24} color="#ab3535ff" />
-          <Text style={styles.lifelineText}>Exit</Text>
-        </TouchableOpacity>
-      </View>
+            <View style={styles.lifelines}>
+              <TouchableOpacity style={[styles.lifeBtn, !lifelines.fifty && styles.lifeBtnDisabled]} onPress={useFifty} disabled={!lifelines.fifty}>
+                <Text style={styles.lifeText}>50:50</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.lifeBtn, !lifelines.audience && styles.lifeBtnDisabled]} onPress={useAudience} disabled={!lifelines.audience}>
+                <Ionicons name="people-outline" size={16} color="#fff" />
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.lifeBtn, !lifelines.expert && styles.lifeBtnDisabled]} onPress={useExpert} disabled={!lifelines.expert}>
+                <Ionicons name="school-outline" size={16} color="#fff" />
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.lifeBtn, !lifelines.friend && styles.lifeBtnDisabled]} onPress={useFriend} disabled={!lifelines.friend}>
+                <Ionicons name="call-outline" size={16} color="#fff" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {phase === 'done' && (
+        <View style={styles.section}>
+          <Text style={styles.title}>Quiz Completed</Text>
+          <TouchableOpacity onPress={() => navigation.replace('Quizselection')}>
+            <Text style={{color:'#E40BDC', fontSize:18, fontWeight:'700'}}>Restart</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default ZoomSession;
-
-// --- 4. STYLES ---
+export default QuizScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1C1C1C', // Dark background for KBC feel
-    paddingTop: Platform.OS === 'android' ? 30 : 0,
-  },
-  header: {
-    padding: 15,
-    backgroundColor: '#333333',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: '#FFD700', // Gold color
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#FFD700',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-  scoreText: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
-  },
-  questionContainer: {
-    margin: 20,
-    padding: 15,
-    backgroundColor: '#333333',
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#4A4A4A',
-  },
-  questionNumber: {
-    fontSize: 14,
-    color: '#aaa',
-    marginBottom: 5,
-    textAlign: 'center',
-  },
-  questionText: {
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  optionsContainer: {
-    flex: 1,
-    paddingHorizontal: 20,
-    marginTop: 10,
-    gap: 15,
-  },
-  optionButton: {
-    backgroundColor: '#333333',
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#FFD700', // Gold border
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  optionLabel: {
-    color: '#FFD700',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-  optionText: {
-    color: '#fff',
-    fontSize: 16,
-    flexShrink: 1, // Allows text to wrap
-  },
-  lifelinesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#4A4A4A',
-    backgroundColor: '#222222',
-  },
-  lifelineButton: {
-    alignItems: 'center',
-  },
-  lifelineText: {
-    color: '#FFD700',
-    fontSize: 12,
-    marginTop: 5,
-    fontWeight: 'bold',
-  },
-  // Result screen styles
-  resultBox: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  resultText: {
-    color: '#fff',
-    fontSize: 20,
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-  resetButton: {
-    flexDirection: 'row',
-    backgroundColor: '#007bff',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
+  container: { flex: 1, backgroundColor: '#1A1625' },
+  section: { flex: 1, padding: 20, alignItems: 'center', justifyContent: 'center' },
+  title: { color: '#FFFFFF', fontSize: 22, fontWeight: '700', marginBottom: 12 },
+  question: { color: '#FFFFFF', fontSize: 18, textAlign: 'center', marginVertical: 12 },
+  options: { width: '100%', marginTop: 8 },
+  option: { backgroundColor: '#2A2438', padding: 14, borderRadius: 10, marginBottom: 10 },
+  optionSelected: { borderWidth: 2, borderColor: '#6B46C1' },
+  optionHidden: { backgroundColor: '#1F1B2D' },
+  optionText: { color: '#FFFFFF', fontSize: 16 },
+  lockBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#6B46C1', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, marginTop: 8 },
+  lockText: { color: '#FFFFFF', fontWeight: '700', marginLeft: 8 },
+  timer: { color: '#A5A8B6', position: 'absolute', right: 20, top: 20 },
+  groupBadge: { color: '#C8B6FF', position: 'absolute', left: 20, top: 20, fontWeight: '700' },
+  actionsRow: { width: '100%', marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  lifelines: { flexDirection: 'row', gap: 8 },
+  lifeBtn: { backgroundColor: '#3B2C59', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 },
+  lifeBtnDisabled: { backgroundColor: '#2A2438', opacity: 0.6 },
+  lifeText: { color: '#FFFFFF', fontWeight: '700' },
+})
+
+
+{/* Next steps I can add:
+Persist per-user progress/scores in Firestore
+Real-time FFF winner detection using a room/session doc
+Audience poll percentages, friend share sheet, expert explanation content from Firestore
+Tell me your Firestore structure for questions and fff so I can finalize queries and add admin tools to seed data. */}

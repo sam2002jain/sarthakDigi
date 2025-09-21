@@ -119,14 +119,14 @@ export default BhajanScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#383e58', // Dark background
+    backgroundColor: '#e1a7294f', // Dark background
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
     paddingTop: 30,
-    backgroundColor: '#3d424dff',
+    backgroundColor: '#f09845ff',
   },
   menuButton: {
     position: 'absolute',

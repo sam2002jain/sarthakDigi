@@ -8,21 +8,21 @@ import { useAuth } from '../components/context/AuthContext';
 
 const SplashScreen = () => {
     const navigation = useNavigation();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isAdmin } = useAuth();
+    
 
     useEffect(() => {
     checkAuthState();
-  }, []);
+  }, [isAuthenticated, isAdmin]);
 
   const checkAuthState = async () => {
-    // Add a small delay to show splash screen
-    setTimeout(() => {
-      if (isAuthenticated) {
-        navigation.replace('Selection');
-      } else {
-        navigation.replace('Auth');
-      }
-    }, 5000);
+    if (isAuthenticated && isAdmin) {
+      navigation.replace('Admin');
+    } else if (isAuthenticated) {
+      navigation.replace('Selection');
+    } else {
+      setTimeout(() => navigation.replace('Auth'), 1200);
+    }
   };
 
   return (

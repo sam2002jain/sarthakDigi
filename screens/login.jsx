@@ -32,7 +32,12 @@ export default function LoginScreen() {
                 lastLogin: new Date().toISOString()
             };
             await login(userData);
-            navigation.replace('Selection');
+            if (email.trim().toLowerCase() === 'admin@gmail.com') {
+                navigation.replace('Admin');
+            } else {
+                navigation.replace('Selection');
+            }
+            
         } catch (err) {
             Alert.alert('Sign in failed', err.message);
         } finally {
