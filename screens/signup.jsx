@@ -10,8 +10,6 @@ import {
   Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from '../components/context/AuthContext';
@@ -31,43 +29,34 @@ export default function SignupScreen({ navigation }) {
 
 
   const handleSignUp = async () => {
-    if (!email || !password || !username) {
-      Alert.alert('Missing info', 'Please enter email, password, and username.');
+    // Validation
+    if (!firstname.trim() || !lastname.trim()) {
+      Alert.alert("Missing info", "Please enter your first and last name.");
+      return;
+    }
+    if (!username.trim()) {
+      Alert.alert("Missing info", "Please enter a username.");
+      return;
+    }
+    if (password.length < 8) {
+      Alert.alert("Invalid password", "Password must be at least 8 characters long.");
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Password mismatch', 'Passwords do not match.');
+      Alert.alert("Password mismatch", "Passwords do not match.");
       return;
     }
-    
-    setIsSubmitting(true);
-    try {
-      // First create auth user
-      const authUser = await createUserWithEmailAndPassword(auth, email.trim(), password);
-      
-      // Then try to create the profile
-      const signUpResult = await signUp({ 
-        firstname, 
-        lastname, 
-        username: username.toLowerCase(), 
+
+    // Navigate to phone authentication screen
+    navigation.navigate("PhoneAuth", {
+      userData: {
+        firstname: firstname.trim(),
+        lastname: lastname.trim(),
+        username: username.trim().toLowerCase(),
         email: email.trim(),
-        uid: authUser.user.uid
-      });
-
-      if (!signUpResult.success) {
-        // If profile creation fails, delete the auth user
-        await authUser.user.delete();
-        Alert.alert('Sign up failed', signUpResult.error);
-        return;
+        password,
       }
-
-      Alert.alert('Success', 'Account created successfully!');
-      navigation.replace('Selection');
-    } catch (err) {
-      Alert.alert('Sign up failed', err.message || 'Please check your connection and try again');
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
   return (
@@ -159,7 +148,7 @@ export default function SignupScreen({ navigation }) {
               />
               <TextInput
                 style={styles.input}
-                placeholder="Create a password (min 8 characters)"
+                placeholder="Create a password (8 char)"
                 placeholderTextColor="#bbb"
                 secureTextEntry={!showPassword}
                 value={password}

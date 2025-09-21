@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "35108607121",
+    "project_id": "sarthakdigi-6071a",
+    "storage_bucket": "sarthakdigi-6071a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35108607121:android:66ba99ec6fcd6471165b30",
+        "android_client_info": {
+          "package_name": "com.sam2002tani.sarthak"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdc9Bt1wBD1OF0PFXDeeCPUmtZnPcag5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

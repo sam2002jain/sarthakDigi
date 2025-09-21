@@ -178,6 +178,6 @@ export const queryDocuments = async (collectionName, fieldPath, operator, value)
   }
 };
 
-export { app, auth, db };
+export { app, auth, db, firebaseConfig };
 
 

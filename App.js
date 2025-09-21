@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginScreen from './screens/login';
 import SignupScreen from './screens/signup';
+import PhoneAuthScreen from './screens/PhoneAuthScreen';
 import ForgetPassScreen from './screens/forgetpass';
 import CustomDrawer from './components/CustomDrawer';
 import Splash from './screens/SplashScreen';
@@ -50,6 +51,9 @@ function DrawerNavigation() {
       }}
     >
       {/* Requested sequence */}
+      <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen name="Selection" component={Selection} />
+      <Drawer.Screen name="Quiz" component={Quiz} />
       <Drawer.Screen name="ManchEkParichay" component={ManchEkParichayScreen} />
       <Drawer.Screen name="WallOfFrame" component={WallOfFrameScreen} />
       <Drawer.Screen name="AVMPal" component={AVMPalScreen} />
@@ -58,14 +62,11 @@ function DrawerNavigation() {
       <Drawer.Screen name="PrashanManch" component={PrashanManchScreen} />
       <Drawer.Screen name="Prabhavna" component={Prabhavna} />
       <Drawer.Screen name="SadbhavnaManch" component={SadbhavnaManchScreen} />
-      <Drawer.Screen name="Quiz" component={Quiz} />
 
       {/* Existing */}
-      <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="Otherlink" component={Otherlink} />
       <Drawer.Screen name="Swadhyay" component={Swadhyay} />
       <Drawer.Screen name="Bhajan" component={BhajanScreen} />
-      <Drawer.Screen name="Selection" component={Selection} />
     </Drawer.Navigator>
   );
 }
@@ -96,6 +97,7 @@ export default function App() {
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Auth" component={LoginScreen} />
             <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen name="PhoneAuth" component={PhoneAuthScreen} />
             <Stack.Screen name="ForgetPass" component={ForgetPassScreen} />
             <Stack.Screen 
               name="Selection" 
