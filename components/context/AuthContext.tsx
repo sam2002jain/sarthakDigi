@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createDocument, updateDocument, getDocument } from '../../firebase';
+import { createDocument, updateDocument, getDocument, deleteDocument } from '../../firebase';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -117,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  
   return (
     <AuthContext.Provider value={{ isAuthenticated, isAdmin, user, login, logout, signUp }}>
       {children}

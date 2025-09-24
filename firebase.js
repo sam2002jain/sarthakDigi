@@ -128,6 +128,7 @@ export const updateActiveStatus = async (collectionName, documentId, isActive) =
     });
 
     console.log('Active status successfully updated!');
+  
     return true;
 
   } catch (error) {

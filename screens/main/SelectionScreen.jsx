@@ -153,7 +153,7 @@ cardBackground: {
 },
 cardBackgroundImage: {
   borderRadius: 15,
-  opacity: 0.25, // ✅ Makes the image slightly faded for readability
+  opacity: 0.45, // ✅ Makes the image slightly faded for readability
 },
 
   cardIcon: {
