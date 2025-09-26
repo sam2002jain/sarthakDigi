@@ -30,6 +30,7 @@ import WrittenCollectionScreen from './screens/main/WrittenCollectionScreen';
 import PrashanManchScreen from './screens/main/PrashanManchScreen';
 import SadbhavnaManchScreen from './screens/main/SadbhavnaManchScreen';
 import KBSuploadScreen from './screens/admin/KBSuploadScreen';
+import HomeScreen from './screens/main/HomeScreen';
 
 
 
@@ -51,6 +52,7 @@ function DrawerNavigation() {
       }}
     >
       {/* Requested sequence */}
+      <Drawer.Screen name="Home" component={HomeScreen}/>
       <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="Selection" component={Selection} />
       <Drawer.Screen name="Quiz" component={Quiz} />

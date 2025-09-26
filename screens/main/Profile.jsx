@@ -1,25 +1,43 @@
-import React,{useEffect, useState} from 'react'
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View, TouchableOpacity, useWindowDimensions, Switch, Alert  } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import React, { useEffect, useState } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  useWindowDimensions,
+  Switch,
+  Alert,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Linking } from 'react-native';
-import { createDocument, updateDocument, deleteDocument, getDocument } from '../../firebase';
+import {
+  createDocument,
+  updateDocument,
+  getDocument,
+  deleteDocument,
+} from '../../firebase';
 
 const Profile = (props) => {
-  const { navigation } = props
+  const { navigation } = props;
   const { width } = useWindowDimensions();
   const [user, setUser] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isEnabled, setIsEnabled] = useState(false);
-  const url = "https://www.linkedin.com/in/jainsanyamit"
+  const url = 'https://www.linkedin.com/in/jainsanyamit';
 
-
+  // -------------------------------
+  // Toggle Switch Function
+  // -------------------------------
   const toggleSwitch = async () => {
     try {
       const documentId = user?.username || user?.email || '';
       if (!documentId) return;
 
-      const newStatus = !isEnabled;
+      const newStatus = !isEnabled; // Toggle current state
       const targetCollection = newStatus ? 'online' : 'offline';
       const oppositeCollection = newStatus ? 'offline' : 'online';
 
@@ -31,52 +49,66 @@ const Profile = (props) => {
         await createDocument(targetCollection, documentId, { isActive: newStatus });
       }
 
-      // Remove from the opposite collection if exists
+      // Remove from the opposite collection
       try {
         await deleteDocument(oppositeCollection, documentId);
       } catch (_) {}
 
-      setIsEnabled(newStatus)
+      // Update local state & persist to AsyncStorage
+      setIsEnabled(newStatus);
+      await AsyncStorage.setItem('userStatus', JSON.stringify(newStatus));
+
+      console.log('User is now', newStatus ? 'Online' : 'Offline');
     } catch (e) {
       console.warn('Failed to update status', e);
     }
   };
 
-  const Planupgrade = async()=>{
+  // -------------------------------
+  // Upgrade Plan Function
+  // -------------------------------
+  const Planupgrade = async () => {
     const supported = await Linking.canOpenURL(url);
-    console.log(supported);
-    if(supported){
+    if (supported) {
       await Linking.openURL(url);
-    }else{
-      Alert.alert("Failed to Open !");
+    } else {
+      Alert.alert('Failed to Open !');
     }
-    
+  };
 
-  }
-
-
-    useEffect(() => {
+  // -------------------------------
+  // Fetch User Data & Load Status
+  // -------------------------------
+  useEffect(() => {
     const fetchUserData = async () => {
       try {
         const profileData = await AsyncStorage.getItem('profiledata');
         if (profileData) {
-          // Parse the JSON string back into an object
           setUser(JSON.parse(profileData));
-          console.log(profileData);
+          console.log('Profile data:', profileData);
+        }
+
+        // Load userStatus from AsyncStorage to persist toggle state
+        const savedStatus = await AsyncStorage.getItem('userStatus');
+        if (savedStatus !== null) {
+          setIsEnabled(JSON.parse(savedStatus));
+          console.log('Loaded status:', JSON.parse(savedStatus));
         }
       } catch (error) {
-        console.error("Failed to load user data from storage", error);
+        console.error('Failed to load data from storage', error);
       } finally {
-        // Set loading to false once the operation is complete
         setIsLoading(false);
       }
     };
+
     fetchUserData();
   }, []);
 
+  const rs = (n) => Math.round((width / 375) * n);
 
-  const rs = (n) => Math.round((width / 375) * n) 
-
+  // -------------------------------
+  // UI
+  // -------------------------------
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -108,58 +140,127 @@ const Profile = (props) => {
               justifyContent: 'center',
             }}
           >
-            <Text style={{ color: '#FFFFFF', fontSize: rs(34), fontWeight: '700', textAlign:'center' }}>{user.firstname} </Text>
+            <Text
+              style={{
+                color: '#FFFFFF',
+                fontSize: rs(34),
+                fontWeight: '700',
+                textAlign: 'center',
+              }}
+            >
+              {user.firstname}
+            </Text>
           </View>
-          <Text style={{ color: '#FFFFFF', fontSize: rs(22), fontWeight: '700', marginTop: rs(12) }}>{user.firstname} {user.lastname}</Text>
-          <Text style={{ color: '#A5A8B6', fontSize: rs(14), marginTop: rs(6) }}>@{user.username}</Text>
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontSize: rs(22),
+              fontWeight: '700',
+              marginTop: rs(12),
+            }}
+          >
+            {user.firstname} {user.lastname}
+          </Text>
+          <Text
+            style={{
+              color: '#A5A8B6',
+              fontSize: rs(14),
+              marginTop: rs(6),
+            }}
+          >
+            @{user.username}
+          </Text>
         </View>
 
         {/* Quick Actions */}
-        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: rs(16), gap: rs(12), alignItems:'center' }}>
-          {/* <TouchableOpacity style={[styles.actionBtn, { paddingVertical: rs(10), paddingHorizontal: rs(14) }]}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginTop: rs(16),
+            gap: rs(12),
+            alignItems: 'center',
+          }}
+        >
+          <TouchableOpacity
+            style={[
+              styles.actionBtnAlt,
+              { paddingVertical: rs(10), paddingHorizontal: rs(14) },
+            ]}
             activeOpacity={0.9}
             onPress={() => {}}
           >
-            <Ionicons name="create-outline" size={rs(18)} color="#FFFFFF" />
-            <Text style={[styles.actionText, { marginLeft: rs(8), fontSize: rs(14) }]}>Edit Profile</Text>
-          </TouchableOpacity> */}
-          <TouchableOpacity style={[styles.actionBtnAlt, { paddingVertical: rs(10), paddingHorizontal: rs(14) }]}
-            activeOpacity={0.9}
-            onPress={() => {}}
-          >
-            <Ionicons name="shield-checkmark-outline" size={rs(18)} color="#6B46C1" />
-            <Text style={[styles.actionTextAlt, { marginLeft: rs(8), fontSize: rs(14) }]}>Privacy</Text>
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={rs(18)}
+              color="#6B46C1"
+            />
+            <Text
+              style={[
+                styles.actionTextAlt,
+                { marginLeft: rs(8), fontSize: rs(14) },
+              ]}
+            >
+              Privacy
+            </Text>
           </TouchableOpacity>
-          <Switch 
-            trackColor={{ false: "#767577", true: "#6B46C1" }}
-            thumbColor={"#f4f3f4"}
+          <Switch
+            trackColor={{ false: '#767577', true: '#6B46C1' }}
+            thumbColor={'#f4f3f4'}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSwitch}
             value={isEnabled}
-            
           />
-          {
-            isEnabled ? (
-              <Text style={{ color: '#29f31aff', fontSize: rs(14), fontWeight: '600', marginTop: rs(6) }}>Online</Text>
-            ) : (
-              <Text style={{ color: '#f60606ff', fontSize: rs(14), fontWeight: '600', marginTop: rs(6) }}>Offline</Text>
-            )
-          }
-
-         
+          {isEnabled ? (
+            <Text
+              style={{
+                color: '#29f31aff',
+                fontSize: rs(14),
+                fontWeight: '600',
+                marginTop: rs(6),
+              }}
+            >
+              Online
+            </Text>
+          ) : (
+            <Text
+              style={{
+                color: '#f60606ff',
+                fontSize: rs(14),
+                fontWeight: '600',
+                marginTop: rs(6),
+              }}
+            >
+              Offline
+            </Text>
+          )}
         </View>
 
         {/* Info Cards */}
         <View style={{ paddingHorizontal: rs(20), marginTop: rs(20) }}>
-          <View style={[styles.card, { padding: rs(14), borderRadius: rs(14), marginBottom: rs(12) }]}>
+          <View
+            style={[
+              styles.card,
+              { padding: rs(14), borderRadius: rs(14), marginBottom: rs(12) },
+            ]}
+          >
             <Text style={[styles.cardLabel, { fontSize: rs(12) }]}>Username</Text>
             <View style={styles.cardRow}>
               <Text style={[styles.cardValue, { fontSize: rs(16) }]}>{user.username}</Text>
-              <Ionicons name="person-circle-outline" size={rs(20)} color="#94A3B8" />
+              <Ionicons
+                name="person-circle-outline"
+                size={rs(20)}
+                color="#94A3B8"
+              />
             </View>
           </View>
 
-          <View style={[styles.card, { padding: rs(14), borderRadius: rs(14), marginBottom: rs(12) }]}>
+          <View
+            style={[
+              styles.card,
+              { padding: rs(14), borderRadius: rs(14), marginBottom: rs(12) },
+            ]}
+          >
             <Text style={[styles.cardLabel, { fontSize: rs(12) }]}>Email</Text>
             <View style={styles.cardRow}>
               <Text style={[styles.cardValue, { fontSize: rs(16) }]}>{user.email}</Text>
@@ -167,38 +268,38 @@ const Profile = (props) => {
             </View>
           </View>
 
-          <View style={[styles.card, { padding: rs(14), borderRadius: rs(14) }]}> 
+          <View style={[styles.card, { padding: rs(14), borderRadius: rs(14) }]}>
             <Text style={[styles.cardLabel, { fontSize: rs(12) }]}>Membership</Text>
             <View style={styles.cardRow}>
               <Text style={[styles.cardValue, { fontSize: rs(16) }]}>Free plan</Text>
-              <TouchableOpacity style={{ paddingVertical: rs(6), paddingHorizontal: rs(10), backgroundColor: '#2563EB', borderRadius: rs(8) }}onPress={Planupgrade}>
-                <Text style={{ color: '#FFFFFF', fontSize: rs(12), fontWeight: '600' }}>Upgrade</Text>
+              <TouchableOpacity
+                style={{
+                  paddingVertical: rs(6),
+                  paddingHorizontal: rs(10),
+                  backgroundColor: '#2563EB',
+                  borderRadius: rs(8),
+                }}
+                onPress={Planupgrade}
+              >
+                <Text
+                  style={{
+                    color: '#FFFFFF',
+                    fontSize: rs(12),
+                    fontWeight: '600',
+                  }}
+                >
+                  Upgrade
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
-
-        {/* Settings Group */}
-        <View style={{ paddingHorizontal: rs(20), marginTop: rs(18) }}>
-          {[
-            { icon: 'lock-closed-outline', label: 'Security' },
-            { icon: 'help-circle-outline', label: 'Help & Support' },
-          ].map((item, idx) => (
-            <TouchableOpacity key={idx} style={[styles.listItem, { paddingVertical: rs(14) }]} activeOpacity={0.8}>
-              <View style={[styles.listIconWrap, { width: rs(36), height: rs(36), borderRadius: rs(8) }]}> 
-                <Ionicons name={item.icon} size={rs(18)} color="#C8B6FF" />
-              </View>
-              <Text style={[styles.listLabel, { fontSize: rs(15) }]}>{item.label}</Text>
-              <Ionicons name="chevron-forward" size={rs(18)} color="#94A3B8" />
-            </TouchableOpacity>
-          ))}
-        </View>
       </ScrollView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;
 
 const styles = StyleSheet.create({
   container: {
@@ -219,16 +320,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#E5E7EB',
     fontWeight: '700',
-  },
-  actionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#6B46C1',
-    borderRadius: 10,
-  },
-  actionText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
   },
   actionBtnAlt: {
     flexDirection: 'row',
@@ -258,20 +349,4 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
   },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#2A2438',
-  },
-  listIconWrap: {
-    backgroundColor: '#3B2C59',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  listLabel: {
-    color: '#FFFFFF',
-    flex: 1,
-  },
-})
+});
