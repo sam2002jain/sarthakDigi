@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, BackHandler, ScrollView, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, BackHandler, ScrollView, ImageBackground, Image, StatusBar } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
@@ -22,7 +22,7 @@ const Selection = () => {
       icon: "people-outline",
       description: "Connect with the Jain community online",
       route: "MainApp",
-      src:require("../../assets/onlinejainmanchlogo.jpeg")
+      src: require("../../assets/onlinejainmanchlogo.jpeg"),
     },
     {
       id: 2,
@@ -30,8 +30,7 @@ const Selection = () => {
       icon: "shield-checkmark-outline",
       description: "Explore our insurance solutions",
       route: "Insurance",
-      src:require("../../assets/sarthaklogo.jpeg")
-
+      src: require("../../assets/insurancebg.jpg"),
     },
     {
       id: 3,
@@ -39,15 +38,13 @@ const Selection = () => {
       icon: "print-outline",
       description: "Professional printing services",
       route: null,
-      src:require("../../assets/jainamprintlogo.jpeg")
-
-    }
+      src: require("../../assets/jainamprintlogo.jpeg"),
+    },
   ];
 
   const handlePress = (option) => {
     setSelectedOption(option.title);
-    console.log(option.route);
-    if (option.id=='1') {
+    if (option.id === 1) {
       navigation.replace('MainApp');
     } else if (option.route) {
       navigation.navigate(option.route);
@@ -58,42 +55,78 @@ const Selection = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1A1625" />
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Welcome to Jainam</Text>
+        <Image
+          source={require("../../assets/sarthakbg.jpeg")}
+          style={styles.sarthakbgheader}
+        />
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.subtitle}>Choose Your Service</Text>
-        <ScrollView>
-        <Animatable.View
-          animation="fadeInUp"
-          duration={1500}
-          style={styles.cardsContainer}
-        >
-          {serviceOptions.map((option) => (
-           <TouchableOpacity
-  key={option.id}
-  style={styles.card}
-  onPress={() => handlePress(option)}
->
-  <ImageBackground
-    source={option.src}
-    style={styles.cardBackground}
-    imageStyle={styles.cardBackgroundImage}
-  >
-    <View style={styles.cardIcon}>
-      <Ionicons name={option.icon} size={32} color="#fff" />
-    </View>
-    <Text style={styles.cardTitle}>{option.title}</Text>
-    <Text style={styles.cardDescription}>{option.description}</Text>
-    <View style={styles.arrowContainer}>
-      <Ionicons name="arrow-forward-circle" size={24} color="#fff" />
-    </View>
-  </ImageBackground>
-</TouchableOpacity>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Animatable.View
+            animation="fadeInUp"
+            duration={1500}
+            style={styles.cardsContainer}
+          >
+            {/* Card 1 Full Width */}
+            <TouchableOpacity
+              key={serviceOptions[0].id}
+              style={styles.cardFull}
+              onPress={() => handlePress(serviceOptions[0])}
+            >
+              <ImageBackground
+                source={serviceOptions[0].src}
+                style={styles.cardBackground}
+                imageStyle={styles.cardBackgroundImage}
+                
+              >
+                {/* <View style={styles.cardIcon}>
+                  <Ionicons name={serviceOptions[0].icon} size={32} color="#fff" />
+                </View>
+                <Text style={styles.cardTitle}>{serviceOptions[0].title}</Text>
+                <Text style={styles.cardDescription}>
+                  {serviceOptions[0].description}
+                </Text> */}
+                <View style={styles.arrowContainer}>
+                  <Ionicons name="arrow-forward-circle" size={24} color="#fff" />
+                </View>
+              </ImageBackground>
+            </TouchableOpacity>
 
-          ))}
-        </Animatable.View>
+            {/* Card 2 and Card 3 in same row */}
+            <View style={styles.rowContainer}>
+              {serviceOptions.slice(1).map((option) => (
+                <TouchableOpacity
+                  key={option.id}
+                  style={styles.cardHalf}
+                  onPress={() => handlePress(option)}
+                >
+                  <ImageBackground
+                    source={option.src}
+                    style={styles.cardBackground2}
+                    imageStyle={styles.cardBackgroundImage2}
+                  >
+                    {/* <View style={styles.cardIcon}>
+                      <Ionicons name={option.icon} size={28} color="#fff" />
+                    </View>
+                    <Text style={styles.cardTitleSmall}>{option.title}</Text>
+                    <Text style={styles.cardDescriptionSmall}>
+                      {option.description}
+                    </Text> */}
+                    <View style={styles.arrowContainer}>
+                      <Ionicons
+                        name="arrow-forward-circle"
+                        size={22}
+                        color="#fff"
+                      />
+                    </View>
+                  </ImageBackground>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </Animatable.View>
         </ScrollView>
       </View>
     </View>
@@ -105,65 +138,101 @@ export default Selection;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1A1625",
+    backgroundColor: "#0b0a4aff",
+    paddingTop:10
+  },
+  sarthakbgheader: {
+    position: 'absolute',
+    width: '100%',
+    height: '80%',
+    resizeMode: 'cover',
+    opacity: 5,
+    zIndex: 1,
   },
   header: {
-    padding: 20,
-    paddingTop: 60,
-    backgroundColor: "#eea95aff",
-    alignItems: 'center'
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 28,
-    fontWeight: "bold",
+    height: 150,
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    overflow: 'hidden',
   },
   content: {
     flex: 1,
     padding: 20,
   },
-  subtitle: {
-    color: "#ffffffff",
-    fontSize: 20,
-    marginBottom: 30,
-    textAlign: "center",
-  },
+
   cardsContainer: {
     flexDirection: "column",
   },
-card: {
-  width: "100%",
-  borderRadius: 15,
-  marginBottom: 20,
-  minHeight: 140,
-  overflow: "hidden", // ✅ Ensures rounded corners for image
-  shadowColor: "#000",
-  shadowOffset: {
-    width: 0,
-    height: 4,
-  },
-  shadowOpacity: 0.3,
-  shadowRadius: 4.65,
-  elevation: 8,
-},
-cardBackground: {
-  flex: 1,
-  justifyContent: 'center',
-  padding: 20, // ✅ Move padding here so content isn't cut off
-},
-cardBackgroundImage: {
-  borderRadius: 15,
-  opacity: 0.45, // ✅ Makes the image slightly faded for readability
-},
 
+  /** Full width card (card 1) */
+  cardFull: {
+    width: "100%",
+    borderRadius: 15,
+    marginBottom: 20,
+    minHeight: 140,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+
+  /** Row for card 2 and card 3 */
+  rowContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  cardHalf: {
+    width: "48%",
+    borderRadius: 15,
+    minHeight: 140,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 6,
+    marginBottom: 20,
+  },
+
+  /** Background styling for cards */
+  cardBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    height:200
+  },
+  cardBackgroundImage: {
+    borderRadius: 15,
+    opacity: 0.85,  
+  },
+  cardBackground2: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 15,
+  },
+  cardBackgroundImage2: {
+    borderRadius: 15,
+    opacity: 0.85,
+  },
+
+  /** Common content styles */
   cardIcon: {
-    marginBottom: 15,
+    marginBottom: 10,
   },
   cardTitle: {
-    color: "#f9f8faff",
+    color: "#fff",
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 8,
+  },
+  cardTitleSmall: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 5,
   },
   cardDescription: {
     color: "#fff",
@@ -171,10 +240,15 @@ cardBackgroundImage: {
     opacity: 0.9,
     marginBottom: 15,
   },
+  cardDescriptionSmall: {
+    color: "#fff",
+    fontSize: 12,
+    opacity: 0.8,
+    marginBottom: 10,
+  },
   arrowContainer: {
     position: "absolute",
-    bottom: 15,
-    right: 15,
+    bottom: 10,
+    right: 10,
   },
-
 });
