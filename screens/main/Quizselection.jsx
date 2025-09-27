@@ -1,17 +1,29 @@
-import { StyleSheet, Text, View, TouchableOpacity, BackHandler, ScrollView } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  BackHandler,
+  ScrollView,
+} from "react-native";
+import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
+import { useWindowDimensions } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-const Quizselection = () => {
+const Quizselection = (props) => {
+  const {navigation} = props;
   const [selectedOption, setSelectedOption] = useState(null);
-  const navigation = useNavigation();
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      return true;
-    });
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        return true;
+      }
+    );
     return () => backHandler.remove();
   }, []);
 
@@ -22,7 +34,7 @@ const Quizselection = () => {
       icon: "people-outline",
       description: "Kaun Banega Dharam Shiromani",
       color: "#FF6B6B",
-      route: "Quiz"
+      route: "Quiz",
     },
     {
       id: 2,
@@ -30,7 +42,7 @@ const Quizselection = () => {
       icon: "pencil-outline",
       description: "Participate in our Bhajan Competition",
       color: "#4ECDC4",
-      route: "Bhajan"
+      route: "Bhajan",
     },
     {
       id: 3,
@@ -38,7 +50,7 @@ const Quizselection = () => {
       icon: "podium-outline",
       description: "Quick and fast quiz",
       color: "#b4b4b4",
-      route: "Bhajan"
+      route: "Bhajan",
     },
     {
       id: 4,
@@ -46,7 +58,7 @@ const Quizselection = () => {
       icon: "pencil-outline",
       description: "Prashan Link",
       color: "#C423B4",
-      route: "Bhajan"
+      route: "Bhajan",
     },
     {
       id: 5,
@@ -54,7 +66,7 @@ const Quizselection = () => {
       icon: "trophy-outline",
       description: "Participate in Vaad-Vivad",
       color: "#A3E432",
-      route: "Bhajan"
+      route: "Bhajan",
     },
     {
       id: 6,
@@ -62,53 +74,65 @@ const Quizselection = () => {
       icon: "pencil-outline",
       description: "Participate in Other Quiz",
       color: "#A32b3C",
-      route: "Bhajan"
+      route: "Bhajan",
     },
-    
   ];
 
   const handlePress = (option) => {
     setSelectedOption(option.title);
     console.log(option.route);
-    if (option.id=='1') {
-      navigation.replace('Quiz');
+    if (option.id == "1") {
+      navigation.replace("Quiz");
     } else if (option.route) {
       navigation.navigate(option.route);
     } else {
-      alert('This feature will be available soon!');
+      alert("This feature will be available soon!");
     }
   };
+  const rs = (n) => Math.round((width / 375) * n);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Welcome!  Jai Jinendra</Text>
+        <TouchableOpacity
+          style={[styles.menuButton, { left: rs(15) }]}
+          onPress={() => navigation.openDrawer()}
+          accessibilityRole="button"
+          accessibilityLabel="Open menu"
+        >
+          <Ionicons name="menu" size={rs(26)} color="#FFFFFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Welcome! Jai Jinendra</Text>
       </View>
 
       <View style={styles.content}>
         <ScrollView showsVerticalScrollIndicator={false}>
-        <Animatable.View
-          animation="fadeInUp"
-          duration={1500}
-          style={styles.cardsContainer}
-        >
-          {serviceOptions.map((option) => (
-            <TouchableOpacity
-              key={option.id}
-              style={[styles.card, { backgroundColor: option.color }]}
-              onPress={() => handlePress(option)}
-            >
-              <View style={styles.cardIcon}>
-                <Ionicons name={option.icon} size={32} color="#fff" />
-              </View>
-              <Text style={styles.cardTitle}>{option.title}</Text>
-              <Text style={styles.cardDescription}>{option.description}</Text>
-              <View style={styles.arrowContainer}>
-                <Ionicons name="arrow-forward-circle" size={24} color="#fff" />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </Animatable.View>
+          <Animatable.View
+            animation="fadeInUp"
+            duration={1500}
+            style={styles.cardsContainer}
+          >
+            {serviceOptions.map((option) => (
+              <TouchableOpacity
+                key={option.id}
+                style={[styles.card, { backgroundColor: option.color }]}
+                onPress={() => handlePress(option)}
+              >
+                <View style={styles.cardIcon}>
+                  <Ionicons name={option.icon} size={32} color="#fff" />
+                </View>
+                <Text style={styles.cardTitle}>{option.title}</Text>
+                <Text style={styles.cardDescription}>{option.description}</Text>
+                <View style={styles.arrowContainer}>
+                  <Ionicons
+                    name="arrow-forward-circle"
+                    size={24}
+                    color="#fff"
+                  />
+                </View>
+              </TouchableOpacity>
+            ))}
+          </Animatable.View>
         </ScrollView>
       </View>
     </View>
@@ -126,12 +150,15 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
     backgroundColor: "#f69a4fff",
-    alignItems: 'center'
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   headerTitle: {
     color: "#fff",
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: "bold",
+    textAlign: "center",
   },
   content: {
     flex: 1,
@@ -180,5 +207,5 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 15,
     right: 15,
-  }
+  },
 });

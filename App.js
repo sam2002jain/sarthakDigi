@@ -64,6 +64,7 @@ function DrawerNavigation() {
       <Drawer.Screen name="PrashanManch" component={PrashanManchScreen} />
       <Drawer.Screen name="Prabhavna" component={Prabhavna} />
       <Drawer.Screen name="SadbhavnaManch" component={SadbhavnaManchScreen} />
+      <Drawer.Screen name="Quizselection" component={Quizselection}/>
 
       {/* Existing */}
       <Drawer.Screen name="Otherlink" component={Otherlink} />

@@ -92,7 +92,9 @@ const OtherButtons = [
   },
 ];
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ( props) => {
+    const { navigation } = props;
+
   const [showMore, setShowMore] = useState(false); // state for toggle
 
   // Merge quickbutton and morequickbutton when expanded
